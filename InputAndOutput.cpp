@@ -22,20 +22,20 @@ int ScanCoeffs(double *a, double *b, double *c) {
 int PrintRoots(int numberOfRoots, double x1, double x2) {
     int printSuccess = 0;
     switch (numberOfRoots) {
-        case 0:
-            fprintf(stdout, "Нет корней\n");
+        case ZERO_ROOTS:
+            fprintf(stdout, "No roots\n");
             break;
-        case 1:
-            fprintf(stdout, "Один корень: %.8lf\n", x1);
+        case ONE_ROOT:
+            fprintf(stdout, "One root: %.8lf\n", x1);
             break;
-        case 2:
-            fprintf(stdout, "Два корня: %.8lf и %.8lf\n", x1, x2);
+        case TWO_ROOTS:
+            fprintf(stdout, "Two roots: %.8lf и %.8lf\n", x1, x2);
             break;
-        case INF:
-            fprintf(stdout, "Бесконечность корней\n");
+        case INF_ROOTS:
+            fprintf(stdout, "Infinity number of roots\n");
             break;
         default:
-            fprintf(stderr, "количество корней ничему не соответствует\n");
+            fprintf(stderr, "Not valid number of roots\n");
             printSuccess = 1;
             break;
     }
