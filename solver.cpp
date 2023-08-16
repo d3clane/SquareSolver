@@ -6,7 +6,7 @@
 //solves linear equation
 static int SolveLinearEquation(double a, double b, double *x1);
 
-//comprasions of double numbers with accuracy EPS
+//comparisons of double numbers with accuracy EPS
 #define EPS 1e-9;
 static int eq(double a, double b);
 static int less(double a, double b);
@@ -16,7 +16,7 @@ int SolveQuadraticEquation(double a, double b, double c, double *x1, double *x2)
     assert(x1 != NULL);
     assert(x2 != NULL);
     int numberOfRoots = ZERO_ROOTS;
-    if (a == 0) {
+    if (eq(a, 0.0)) {
         numberOfRoots = SolveLinearEquation(b, c, x1);
     } else {
         double D = b * b - 4 * a * c;

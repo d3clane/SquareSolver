@@ -29,7 +29,7 @@ int PrintRoots(int numberOfRoots, double x1, double x2) {
             fprintf(stdout, "One root: %.8lf\n", x1);
             break;
         case TWO_ROOTS:
-            fprintf(stdout, "Two roots: %.8lf и %.8lf\n", x1, x2);
+            fprintf(stdout, "Two roots: %.8lf and %.8lf\n", x1, x2);
             break;
         case INF_ROOTS:
             fprintf(stdout, "Infinity number of roots\n");
@@ -45,7 +45,7 @@ int PrintRoots(int numberOfRoots, double x1, double x2) {
 
 static int SafeScanfd(double *a) {
     if (fscanf(stdin, "%lf", a) != 1) {
-        fprintf(stderr, "Ошибка чтения коэффициентов");
+        fprintf(stderr, "Error reading coefficients");
         return 1;
     }
     return 0;
