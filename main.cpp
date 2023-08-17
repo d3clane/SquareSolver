@@ -2,15 +2,16 @@
 #include "InputAndOutput.h"
 #include "solver.h"
 #include <stdlib.h>
+#include <math.h>
 int main() {
-    double a = 0, b = 0, c = 0;
-    double x1, x2;
+    double a = NAN, b = NAN, c = NAN;
+    double x1 = NAN, x2 = NAN;
 
     /* scanning coeffs for quadratic equation */
     if (ScanCoeffs(&a, &b, &c) != 0) {
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
-    int numberOfRoots = SolveQuadraticEquation(a, b, c, &x1, &x2);
+    enum NumberOfRoots numberOfRoots = SolveQuadraticEquation(a, b, c, &x1, &x2);
     PrintRoots(numberOfRoots, x1, x2);
 }

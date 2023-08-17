@@ -6,20 +6,29 @@
 #include "InputAndOutput.h"
 #include "solver.h"
 
-static int SafeScanfd(double *a);
+static inline void skipSymbols();
+static inline int menuInput();
 
 int ScanCoeffs(double *a, double *b, double *c) {
     assert(a != NULL);
     assert(b != NULL);
     assert(c != NULL);
-    int scanfSuccess = 0;
-    scanfSuccess = scanfSuccess || SafeScanfd(a);
-    scanfSuccess = scanfSuccess || SafeScanfd(b);
-    scanfSuccess = scanfSuccess || SafeScanfd(c);
-    return scanfSuccess;
+    const int numberOfReadValues = 3;
+
+    int quitInput = menuInput(); //quitInput - flag to quit the scan program without getting correct input of coeffs
+
+    int scannedVals = fscanf(stdin, "%lf%lf%lf", a, b, c);
+    while (scannedVals != numberOfReadValues && quitInput != 1) {
+        fprintf(stdout, "not valid input\n");
+        skipSymbols();
+        quitInput = menuInput();
+        scannedVals = fscanf(stdin, "%lf%lf%lf", a, b, c);
+    }
+
+    return quitInput;
 }
 
-int PrintRoots(int numberOfRoots, double x1, double x2) {
+int PrintRoots(const enum NumberOfRoots numberOfRoots, const double x1, const double x2) {
     int printSuccess = 0;
     switch (numberOfRoots) {
         case ZERO_ROOTS:
@@ -42,11 +51,15 @@ int PrintRoots(int numberOfRoots, double x1, double x2) {
     return printSuccess;
 }
 
+static inline int menuInput() {
+    fprintf(stdout, "Print coefficients a, b, c for the equation type ax^2 + bx + c: (or q to quit)\n");
+    int ch = getc(stdin);
+    ungetc(ch, stdin);
+    return ch == 'q';
+}
 
-static int SafeScanfd(double *a) {
-    if (fscanf(stdin, "%lf", a) != 1) {
-        fprintf(stderr, "Error reading coefficients");
-        return 1;
+static inline void skipSymbols() {
+    while (getchar() != '\n') {
+        continue;
     }
-    return 0;
 }
