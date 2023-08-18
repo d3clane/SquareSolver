@@ -10,7 +10,7 @@
 
 static inline enum NumberOfRoots convertNumberOfRootsToEnum(int numberOfRoots);
 static inline void swap(double *a, double *b);
-static inline char *convertEnumToString(enum NumberOfRoots numberOfRoots);
+static inline const char *convertEnumToString(enum NumberOfRoots numberOfRoots);
 
 void Testing() {
     FILE *fp = fopen(FILE_NAME, FILE_MODE);
@@ -23,11 +23,10 @@ void Testing() {
     int testNumber = 1;
     while (numberOfSuccessfullyReadValues == haveToReadValuesAtOnce) {
         enum NumberOfRoots myNumberOfRoots = SolveQuadraticEquation(a, b, c, &myX1, &myX2);
-        char *stringNumberOfRoots = convertEnumToString(myNumberOfRoots);
         enum NumberOfRoots testNumberOfRoots = convertNumberOfRootsToEnum(numberOfRoots);
         if (testNumberOfRoots != myNumberOfRoots) {
             fprintf(stdout, "Test %d: number of roots do not match\n", testNumber);
-            fprintf(stdout, "program expected %s, test has %s\n", stringNumberOfRoots,
+            fprintf(stdout, "program expected %s, test has %s\n", convertEnumToString(myNumberOfRoots),
                     convertEnumToString(testNumberOfRoots));
         } else {
 
@@ -78,15 +77,15 @@ static inline enum NumberOfRoots convertNumberOfRootsToEnum(int numberOfRoots) {
     return myNumberOfRoots;
 }
 
-static inline char *convertEnumToString(enum NumberOfRoots numberOfRoots) {
+static inline const char *convertEnumToString(enum NumberOfRoots numberOfRoots) {
     if (numberOfRoots == ZERO_ROOTS) {
-        return (char *)"zero roots";
+        return "zero roots";
     } else if (numberOfRoots == ONE_ROOT) {
-        return (char *)"one root";
+        return "one root";
     } else if (numberOfRoots == TWO_ROOTS) {
-        return (char *)"two roots";
+        return "two roots";
     } else {
-        return (char *)"infinite number of roots";
+        return "infinite number of roots";
     }
 }
 
