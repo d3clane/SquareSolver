@@ -2,14 +2,9 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include "doubleComparisons.h"
 
-//comparisons of double numbers with accuracy EPS
-static const double EPS = 1e-9;
-static int equal(const double a, const double b);
-static int less(const double a, const double b);
-static int more(const double a, const double b);
-
-enum NumberOfRoots SolveQuadraticEquation(const double a, const double b, const double c, double *x1, double *x2) {
+enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *x1, double *x2) {
     assert(x1 != NULL);
     assert(x2 != NULL);
     enum NumberOfRoots numberOfRoots = ZERO_ROOTS;
@@ -32,7 +27,7 @@ enum NumberOfRoots SolveQuadraticEquation(const double a, const double b, const 
     return numberOfRoots;
 }
 
-enum NumberOfRoots SolveLinearEquation(const double a, const double b, double *x1) {
+enum NumberOfRoots SolveLinearEquation(double a, double b, double *x1) {
     if (equal(a, 0.0)) {
         if (equal(b, 0.0)) {
             return INF_ROOTS;
@@ -43,14 +38,3 @@ enum NumberOfRoots SolveLinearEquation(const double a, const double b, double *x
     return ONE_ROOT;
 }
 
-static int equal(const double a, const double b) {
-    return fabs(a - b) < EPS;
-}
-
-static int less(const double a, const double b) {
-    return b - a > EPS;
-}
-
-static int more(const double a, const double b) {
-    return a - b > EPS;
-}

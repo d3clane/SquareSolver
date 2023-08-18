@@ -8,12 +8,6 @@
  * supports solving quadratic and linear equations
  */
 
-/*! \defgroup SolvingFuncs
- * \brief Functions for solving equations
- *
- * supports solving quadratic and linear equations
- */
-
 #ifndef QUADRIC_SOLVER_H
 #define QUADRIC_SOLVER_H
 
@@ -41,6 +35,6 @@ enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *
 /// \param [in] b free coefficient
 /// \param [out] x1 pointer to the storage for the root
 /// \return number of roots
-enum NumberOfRoots SolveLinearEquation(const double a, const double b, double *x1);
+enum NumberOfRoots SolveLinearEquation(double a, double b, double *x1);
 
 #endif //QUADRIC_SOLVER_H
