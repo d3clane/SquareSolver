@@ -4,14 +4,16 @@
 
 #include "DoubleComparisons.h"
 
-int equal(double a, double b) {
-    return fabs(a - b) < EPS;
-}
+ComparisonResult Compare(double a, double b) {
+    ComparisonResult result = EQUAL;
 
-int less(double a, double b) {
-    return b - a > EPS;
-}
+    if (b - a > EPS) {
+        result = LESS;
+    } else if (a - b > EPS) {
+        result = GREATER;
+    } else {
+        result = EQUAL;
+    }
 
-int greater(double a, double b) {
-    return a - b > EPS;
+    return result;
 }

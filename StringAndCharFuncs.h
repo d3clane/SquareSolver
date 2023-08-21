@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "Errors.h"
+
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief delete spaces from the string
@@ -23,7 +25,7 @@ void DeleteSpaces(char *string);
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief skip line symbols until the new line or EOF
-void skipSymbols();
+void SkipSymbols();
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -31,7 +33,7 @@ void skipSymbols();
 ///
 /// \param [in] c
 /// \return true (1) if c is a sign otherwise false (0)
-int isSign(char c);
+int IsSign(char c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -41,15 +43,6 @@ int isSign(char c);
 /// \param [in] c character to change
 /// \return the opposite sign if c is a sign otherwise return c
 char ChangeSign(char c);
-
-//---------------------------------------------------------------------------------------------------------------------
-
-/// \brief fgets with deleting new line symbol
-///
-/// \param [out] name
-/// \param [in] size
-/// \return 0 if reading is successful otherwise not 0
-int fgets_s(char *name, size_t size);
 
 //---------------------------------------------------------------------------------------------------------------------
 

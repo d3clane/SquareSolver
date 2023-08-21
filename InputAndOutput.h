@@ -11,23 +11,28 @@
 #define INPUT_AND_OUTPUT_H
 
 #include <stdio.h>
+
+#include "Errors.h"
 #include "Solver.h"
+#include "StringAndCharFuncs.h"
+#include "StringEquationFuncs.h"
+
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief bit fields for command line flags
 ///
 /// flags that indicates different input modes
 typedef struct {
-    unsigned int readFromFile        : 1; ///< flag indicates that input should be read from the file
-    unsigned int readFromStdin       : 1; ///< flag indicates that input should be read from stdin
-    unsigned int readFromCommandLine : 1; ///< flag indicates that input should be read from the command line
-    unsigned int testMode            : 1; ///< flag indicates that program is started in testing mode
-    unsigned int equationInputMode   : 1; ///< flag indicated that program have to read equation not only coefficients
+    unsigned char readFromFile        : 1; ///< flag indicates that input should be read from the file
+    unsigned char readFromStdin       : 1; ///< flag indicates that input should be read from stdin
+    unsigned char readFromCommandLine : 1; ///< flag indicates that input should be read from the command line
+    unsigned char testMode            : 1; ///< flag indicates that program is started in testing mode
+    unsigned char equationInputMode   : 1; ///< flag indicated that program have to read equation not only coefficients
 } CommandLineFlags;
 
 //---------------------------------------------------------------------------------------------------------------------
 
-extern CommandLineFlags commandLineFlags; ///< constant contains command line flags
+extern CommandLineFlags commandLineFlags; ///< constant contains command line flags. \warning don't change
 
 //---------------------------------------------------------------------------------------------------------------------
 /// \brief command line flags
@@ -59,7 +64,7 @@ const static char *_EQUATION_INPUT_MODE_FLAG = "-eq";
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful otherwise not 0
-int ReadInput(int argc, const char *argv[], double *a, double *b, double *c);
+Errors ReadInput(int argc, const char *argv[], double *a, double *b, double *c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -77,7 +82,7 @@ CommandLineFlags ReadCommandLineFlags(int argc, const char *argv[]);
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful or not 0 if the user decided to quit the input
-int ReadCoeffsFromStdin(double *a, double *b, double *c);
+Errors ReadCoeffsFromStdin(double *a, double *b, double *c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -88,7 +93,7 @@ int ReadCoeffsFromStdin(double *a, double *b, double *c);
 /// \param [out] c pointer to the storage for c coefficient
 /// \param [in] fp pointer to the FILE
 /// \return 0 if reading is successful otherwise not 0
-int ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
+Errors ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -97,7 +102,7 @@ int ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
 /// \param [out] name storage for file name
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
-int ReadFileNameFromStdin(char *name, size_t size);
+Errors ReadFileNameFromStdin(char *name, size_t size);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -108,7 +113,7 @@ int ReadFileNameFromStdin(char *name, size_t size);
 /// \param [out] name storage for file name
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
-int ReadFileNameFromCommandLine(int argc, const char *argv[], char *name, size_t size);
+Errors ReadFileNameFromCommandLine(int argc, const char *argv[], char *name, size_t size);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -118,7 +123,7 @@ int ReadFileNameFromCommandLine(int argc, const char *argv[], char *name, size_t
 /// \param [in] x1 root number 1
 /// \param [in] x2 root number 2
 /// \return 0 if printing is successful otherwise not 0
-int PrintRoots(enum NumberOfRoots numberOfRoots, double x1, double x2);
+Errors PrintRoots(enum NumberOfRoots numberOfRoots, double x1, double x2);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -131,7 +136,7 @@ int PrintRoots(enum NumberOfRoots numberOfRoots, double x1, double x2);
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful otherwise not 0
-int ReadCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c);
+Errors ReadCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -143,7 +148,7 @@ int ReadCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b
 /// \param [out] b  linear coefficient
 /// \param [out] c  free coefficient
 /// \return 0 if reading is successful otherwise not 0
-int ReadEquationCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c);
+Errors ReadEquationCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -153,7 +158,7 @@ int ReadEquationCoeffsFromCommandLine(int argc, const char *argv[], double *a, d
 /// \param [out] b  linear coefficient
 /// \param [out] c  free coefficient
 /// \return 0 if reading is successful otherwise not 0
-int ReadEquationCoeffsFromStdin(double *a, double *b, double *c);
+Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -164,11 +169,17 @@ int ReadEquationCoeffsFromStdin(double *a, double *b, double *c);
 /// \param [out] c  free coefficient
 /// \param [in] fp pointer to the FILE
 /// \return 0 if reading is successful otherwise not 0
-int ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
+Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-
+/// \brief fgets with deleting new line symbol
+///
+/// \param [out] name
+/// \param [in] size
+/// \return 0 if reading is successful otherwise not 0
+Errors Fgets_s(char *name, size_t size);
 
 //---------------------------------------------------------------------------------------------------------------------
+
 #endif

@@ -8,6 +8,8 @@
 #ifndef STRING_EQUATION_FUNCS_H
 #define STRING_EQUATION_FUNCS_H
 
+#include "StringAndCharFuncs.h"
+
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief enum returning power of the x value in the equation
@@ -31,7 +33,7 @@ static const size_t MAX_EQUATION_SIZE = 100; ///< max size of the equation that 
 /// \param [out] b  linear coefficient
 /// \param [out] c  free coefficient
 /// \return 0 if parsing is successful otherwise not 0
-int ParseQuadraticEquation(const char *equation, double *a, double *b, double *c);
+Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double *c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -42,7 +44,7 @@ int ParseQuadraticEquation(const char *equation, double *a, double *b, double *c
 /// 2) adds signs character before coefficients with no sign. \n
 /// 3) delete equal (=) sign and transposes coefficients to the left side of the equation
 /// \param [out] copyEquation string that will be transposed
-void TransposeEquation(char *copyEquation);
+Errors TransposeEquation(char *copyEquation);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -63,4 +65,13 @@ void TransposeEquation(char *copyEquation);
 enum PowerOfX GetXPowAndCoeff(const char *x, double *target, char **endPtr);
 
 //---------------------------------------------------------------------------------------------------------------------
+
+/// \brief checks equation format
+/// checks if the equation has correct format and can be parsed
+/// \param [in] equation equation to check
+/// \return NO_ERRORS if equation is OK otherwise INVALID_EQUATION_FORMAT
+Errors CheckEquation(const char *equation);
+
+//---------------------------------------------------------------------------------------------------------------------
+
 #endif

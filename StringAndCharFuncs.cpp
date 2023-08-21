@@ -22,27 +22,14 @@ void DeleteSpaces(char *string) {
     *(string - shift) = *string; // '\0' on pos (string - shift) (last pos)
 }
 
-int fgets_s(char *name, size_t size) {
-    int readError = 0;
-
-    readError = (fgets(name, (int) size, stdin) == NULL);
-
-    char *ptr = strchr(name, '\n');
-    if (ptr != NULL) {
-        *ptr = '\0';
-    }
-
-    return readError;
-}
-
-void skipSymbols() {
+void SkipSymbols() {
     int ch = getchar();
     while (ch != '\n' && ch != EOF) {
         ch = getchar();
     }
 }
 
-int isSign(char c) {
+int IsSign(char c) {
     return c == '-' || c == '+';
 }
 

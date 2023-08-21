@@ -13,7 +13,10 @@
 
 #include <assert.h>
 #include <math.h>
+#include <stdio.h>
+
 #include "DoubleComparisons.h"
+#include "Errors.h"
 
 //--------------------------------------------------------------------------------------------------------------------
 /// \brief enum for number of roots of the equation
@@ -29,17 +32,18 @@ enum NumberOfRoots {
 ///
 /// \param [in] numberOfRoots number of roots
 /// \return number of roots enum type
-enum NumberOfRoots convertNumberOfRootsToEnum(int numberOfRoots);
+enum NumberOfRoots ConvertNumberOfRootsToEnum(int numberOfRoots);
 
 //--------------------------------------------------------------------------------------------------------------------
 /// \brief converts enum NumberOfRoots to string
 ///
 /// \param [in] numberOfRoots number of roots
 /// \return string number of roots
-/// convertEnumToString(numberOfRoots) returns "INF_ROOTS"
-const char *convertEnumToString(enum NumberOfRoots numberOfRoots);
+/// ConvertEnumToString(numberOfRoots) returns "INF_ROOTS"
+const char *ConvertEnumToString(enum NumberOfRoots numberOfRoots);
 
 //--------------------------------------------------------------------------------------------------------------------
+
 /// \brief solves quadratic equation
 ///
 /// \param [in] a quadratic coefficient of x^2

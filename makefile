@@ -5,39 +5,51 @@ TARGET = quadratic_Solver
 .PHONY: all
 all: $(TARGET)
 
-$(TARGET): Solver.o InputAndOutput.o StringAndCharFuncs.o StringEquationFuncs.o DoubleComparisons.o main.o TestingMode.o
+$(TARGET): Solver.o InputAndOutput.o StringAndCharFuncs.o StringEquationFuncs.o DoubleComparisons.o main.o TestingMode.o Errors.o
 	$(CXX) $^ -o $(TARGET) $(CXXFLAGS)
 
 DoubleComparisons.o: DoubleComparisons.cpp DoubleComparisons.h
 	$(CXX) -c DoubleComparisons.cpp $@ $(CXXFLAGS)
 
-Solver.o: Solver.cpp Solver.h DoubleComparisons.cpp DoubleComparisons.h
+Solver.o: 			  Solver.cpp            Solver.h \
+		   DoubleComparisons.cpp DoubleComparisons.h \
+		   			  Errors.cpp 			Errors.h
 	$(CXX) -c Solver.cpp $@ $(CXXFLAGS)
 
 InputAndOutput.o: 		InputAndOutput.cpp 		 InputAndOutput.h \
 				  		        Solver.cpp 				 Solver.h \
 				    StringAndCharFuncs.cpp 	 StringAndCharFuncs.h \
-				   StringEquationFuncs.cpp  StringEquationFuncs.h
+				   StringEquationFuncs.cpp  StringEquationFuncs.h \
+				   				Errors.cpp				 Errors.h
 	$(CXX) -c InputAndOutput.cpp $@ $(CXXFLAGS)
 
 StringAndCharFuncs.o: StringAndCharFuncs.cpp StringAndCharFuncs.h
 	$(CXX) -c StringAndCharFuncs.cpp $@ $(CXXFLAGS)
 
 StringEquationFuncs.o: StringEquationFuncs.cpp StringEquationFuncs.h \
-					    StringAndCharFuncs.cpp  StringAndCharFuncs.h
+					    StringAndCharFuncs.cpp  StringAndCharFuncs.h \
+									Errors.cpp				Errors.h
 	$(CXX) -c StringEquationFuncs.cpp $@ $(CXXFLAGS)
 
 TestingMode.o: 		 TestingMode.cpp       TestingMode.h \
 			   DoubleComparisons.cpp DoubleComparisons.h \
-						  Solver.cpp 			Solver.h
+						  Solver.cpp 			Solver.h \
+						  Errors.cpp 			Errors.h
 	$(CXX) -c TestingMode.cpp $@ $(CXXFLAGS)
 
-main.o: main.cpp \
+main.o: 		  main.cpp                  \
 		InputAndOutput.cpp InputAndOutput.h \
 				Solver.cpp		   Solver.h \
-		   TestingMode.cpp 	  TestingMode.h
+		   TestingMode.cpp 	  TestingMode.h \
+		   		Errors.cpp 		   Errors.h
 	$(CXX) -c main.cpp $@ $(CXXFLAGS)
 
+Errors.o: Errors.cpp Errors.h
+	$(CXX) -c Errors.cpp $@ $(CXXFLAGS)
 
+
+.PHONY: clean
+clean:
+	rm -rf *.o
 
 
