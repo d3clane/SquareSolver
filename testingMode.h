@@ -6,20 +6,26 @@
  * \brief contains functions and info for testing program
  *
  * contains functions for testing and info about file name and opening mode
- * all functions should be used only after using #define TEST
+ * all functions should be used only after using -t command line mode
  */
-#ifndef QUADRIC_TESTING_MODE_H
-#define QUADRIC_TESTING_MODE_H
+#ifndef TESTING_MODE_H
+#define TESTING_MODE_H
+
+#include <stdio.h>
+
+//---------------------------------------------------------------------------------------------------------------------
 
 #define TEST
 static const char *FILE_NAME = "test.txt";
 static const char *FILE_MODE = "r";
 
+//---------------------------------------------------------------------------------------------------------------------
+
 /*!
- *\brief  function reads input from test file and checks if answers are right
+ *\brief  function reads input from test file and checks if answers are correct
  */
  /*!
- * function read input from file $FILE_NAME$ with mode $(FILE_MODE) and compares calculated answers with answers from file \n
+ * function read input from file $FILE_NAME$ with mode $FILE_MODE$ and compares calculated answers with answers from file \n
  * format of test file input : \n
  * int1 double1 double2 double3 double4 double5 (different quadratic equation input should be on different string) \n
  * int1 - number of roots. Could be 0, 1, 2. Any other number counts as infinite number of roots \n
@@ -32,4 +38,6 @@ static const char *FILE_MODE = "r";
  */
 void Testing();
 
-#endif //QUADRIC_TESTING_MODE_H
+//---------------------------------------------------------------------------------------------------------------------
+
+#endif //TESTING_MODE_H

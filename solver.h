@@ -8,9 +8,14 @@
  * supports solving quadratic and linear equations
  */
 
-#ifndef QUADRIC_SOLVER_H
-#define QUADRIC_SOLVER_H
+#ifndef SOLVER_H
+#define SOLVER_H
 
+#include <assert.h>
+#include <math.h>
+#include "DoubleComparisons.h"
+
+//--------------------------------------------------------------------------------------------------------------------
 /// \brief enum for number of roots of the equation
 enum NumberOfRoots {
     ZERO_ROOTS = 0, ///< case there is no solutions for the equation
@@ -19,6 +24,22 @@ enum NumberOfRoots {
     INF_ROOTS  = -1, ///< case there is infinite number of solutions for the equation
 };
 
+//--------------------------------------------------------------------------------------------------------------------
+/// \brief converts [int] number of roots to enum NumberOfRoots
+///
+/// \param [in] numberOfRoots number of roots
+/// \return number of roots enum type
+enum NumberOfRoots convertNumberOfRootsToEnum(int numberOfRoots);
+
+//--------------------------------------------------------------------------------------------------------------------
+/// \brief converts enum NumberOfRoots to string
+///
+/// \param [in] numberOfRoots number of roots
+/// \return string number of roots
+/// convertEnumToString(numberOfRoots) returns "INF_ROOTS"
+const char *convertEnumToString(enum NumberOfRoots numberOfRoots);
+
+//--------------------------------------------------------------------------------------------------------------------
 /// \brief solves quadratic equation
 ///
 /// \param [in] a quadratic coefficient of x^2
@@ -29,6 +50,7 @@ enum NumberOfRoots {
 /// \return number of roots
 enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *x1, double *x2);
 
+//--------------------------------------------------------------------------------------------------------------------
 /// \brief solves linear equation
 ///
 /// \param [in] a linear coefficient of x
@@ -37,4 +59,5 @@ enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *
 /// \return number of roots
 enum NumberOfRoots SolveLinearEquation(double a, double b, double *x1);
 
-#endif //QUADRIC_SOLVER_H
+//--------------------------------------------------------------------------------------------------------------------
+#endif //SOLVER_H

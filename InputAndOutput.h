@@ -7,11 +7,13 @@
  * \brief Contains functions for working with input and output
  */
 
-#ifndef QUADRIC_INPUT_AND_OUTPUT_H
-#define QUADRIC_INPUT_AND_OUTPUT_H
+#ifndef INPUT_AND_OUTPUT_H
+#define INPUT_AND_OUTPUT_H
 
-#include "solver.h"
+#include <stdio.h>
+#include "Solver.h"
 //---------------------------------------------------------------------------------------------------------------------
+
 /// \brief bit fields for command line flags
 ///
 /// flags that indicates different input modes
@@ -19,18 +21,33 @@ typedef struct {
     unsigned int readFromFile        : 1; ///< flag indicates that input should be read from the file
     unsigned int readFromStdin       : 1; ///< flag indicates that input should be read from stdin
     unsigned int readFromCommandLine : 1; ///< flag indicates that input should be read from the command line
-
+    unsigned int testMode            : 1; ///< flag indicates that program is started in testing mode
+    unsigned int equationInputMode   : 1; ///< flag indicated that program have to read equation not only coefficients
 } CommandLineFlags;
 
 //---------------------------------------------------------------------------------------------------------------------
 
-/// \brief command line flags
-const static char * FILEFlAG        = "-f"; ///< -f getting input from file (if "-c" flag is added, file name should be in command line,
-///< otherwise program reads the file name from the standard input).
-const static char * COMMANDLINEFLAG = "-c"; ///< -c getting input from commandline
-const static char * STDINFLAG       = "-s"; ///< -s getting input from stdin. this flag is used if "-c" is not specified.
-///< Could be used with "-f" to read file name from the standard input
+extern CommandLineFlags commandLineFlags; ///< constant contains command line flags
 
+//---------------------------------------------------------------------------------------------------------------------
+/// \brief command line flags
+
+///< -f getting input from file (if "-c" flag is added, file name have to be in command line, \
+///< otherwise program reads the file name from the standard input).
+const static char *_FILE_FlAG                =  "-f";
+
+///< -c getting input from commandline
+const static char *_COMMAND_LINE_FLAG        =  "-c";
+
+///< -s getting input from stdin. this flag is used if "-c" is not specified. \
+///< Could be used with "-f" to read file name from the standard input
+const static char *_STDIN_FLAG               =  "-s";
+
+/// < -t program enters testing mode
+const static char *_TEST_MODE_FLAG           =  "-t";
+
+///< program reads equation not only coefficients
+const static char *_EQUATION_INPUT_MODE_FLAG = "-eq";
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -43,6 +60,7 @@ const static char * STDINFLAG       = "-s"; ///< -s getting input from stdin. th
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful otherwise not 0
 int ReadInput(int argc, const char *argv[], double *a, double *b, double *c);
+
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief reading command line flags
@@ -60,6 +78,7 @@ CommandLineFlags ReadCommandLineFlags(int argc, const char *argv[]);
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful or not 0 if the user decided to quit the input
 int ReadCoeffsFromStdin(double *a, double *b, double *c);
+
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief read coefficients for quadratic equation ax^2 + bx + c from file
@@ -70,6 +89,7 @@ int ReadCoeffsFromStdin(double *a, double *b, double *c);
 /// \param [in] fp pointer to the FILE
 /// \return 0 if reading is successful otherwise not 0
 int ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
+
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief read file name from standard input
@@ -78,6 +98,7 @@ int ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
 int ReadFileNameFromStdin(char *name, size_t size);
+
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief
@@ -88,6 +109,7 @@ int ReadFileNameFromStdin(char *name, size_t size);
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
 int ReadFileNameFromCommandLine(int argc, const char *argv[], char *name, size_t size);
+
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief print roots to the standard output
@@ -97,6 +119,7 @@ int ReadFileNameFromCommandLine(int argc, const char *argv[], char *name, size_t
 /// \param [in] x2 root number 2
 /// \return 0 if printing is successful otherwise not 0
 int PrintRoots(enum NumberOfRoots numberOfRoots, double x1, double x2);
+
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief reads coefficients from the command line
@@ -109,6 +132,43 @@ int PrintRoots(enum NumberOfRoots numberOfRoots, double x1, double x2);
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful otherwise not 0
 int ReadCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief reads equation from command line and converts to coefficients
+/// equation format: 5x^2 + 3x - 1 = 7x + 2
+/// \param [in] argc number of argv values
+/// \param [in] argv command line arguments
+/// \param [out] a  quadratic coefficient
+/// \param [out] b  linear coefficient
+/// \param [out] c  free coefficient
+/// \return 0 if reading is successful otherwise not 0
+int ReadEquationCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+///\brief read equation from stdin and converts to coefficients
+/// equation format: 5x^2 + 3x - 1 = 7x + 2
+/// \param [out] a  quadratic coefficient
+/// \param [out] b  linear coefficient
+/// \param [out] c  free coefficient
+/// \return 0 if reading is successful otherwise not 0
+int ReadEquationCoeffsFromStdin(double *a, double *b, double *c);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+///\brief read equation from file and converts to coefficients
+/// equation format: 5x^2 + 3x - 1 = 7x + 2
+/// \param [out] a  quadratic coefficient
+/// \param [out] b  linear coefficient
+/// \param [out] c  free coefficient
+/// \param [in] fp pointer to the FILE
+/// \return 0 if reading is successful otherwise not 0
+int ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+
 
 //---------------------------------------------------------------------------------------------------------------------
 #endif
