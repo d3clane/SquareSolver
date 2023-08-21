@@ -14,7 +14,6 @@ Errors Testing() {
     }
 
     static const int haveToReadValuesAtOnce = 6;
-    static const int maxLenDouble = 40;
 
     int numberOfRoots = 0;
 

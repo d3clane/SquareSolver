@@ -8,44 +8,29 @@ all: $(TARGET)
 $(TARGET): Solver.o InputAndOutput.o StringAndCharFuncs.o StringEquationFuncs.o DoubleComparisons.o main.o TestingMode.o Errors.o
 	$(CXX) $^ -o $(TARGET) $(CXXFLAGS)
 
-DoubleComparisons.o: DoubleComparisons.cpp DoubleComparisons.h
-	$(CXX) -c DoubleComparisons.cpp $@ $(CXXFLAGS)
+DoubleComparisons.o: DoubleComparisons.cpp
+	$(CXX) -c $^ -o $@ $(CXXFLAGS)
 
-Solver.o: 			  Solver.cpp            Solver.h \
-		   DoubleComparisons.cpp DoubleComparisons.h \
-		   			  Errors.cpp 			Errors.h
-	$(CXX) -c Solver.cpp $@ $(CXXFLAGS)
+Solver.o: Solver.cpp
+	$(CXX) -c $^ -o $@ $(CXXFLAGS)
 
-InputAndOutput.o: 		InputAndOutput.cpp 		 InputAndOutput.h \
-				  		        Solver.cpp 				 Solver.h \
-				    StringAndCharFuncs.cpp 	 StringAndCharFuncs.h \
-				   StringEquationFuncs.cpp  StringEquationFuncs.h \
-				   				Errors.cpp				 Errors.h
-	$(CXX) -c InputAndOutput.cpp $@ $(CXXFLAGS)
+InputAndOutput.o: InputAndOutput.cpp
+	$(CXX) -c $^ -o $@ $(CXXFLAGS)
 
-StringAndCharFuncs.o: StringAndCharFuncs.cpp StringAndCharFuncs.h
-	$(CXX) -c StringAndCharFuncs.cpp $@ $(CXXFLAGS)
+StringAndCharFuncs.o: StringAndCharFuncs.cpp
+	$(CXX) -c $^ -o $@ $(CXXFLAGS)
 
-StringEquationFuncs.o: StringEquationFuncs.cpp StringEquationFuncs.h \
-					    StringAndCharFuncs.cpp  StringAndCharFuncs.h \
-									Errors.cpp				Errors.h
-	$(CXX) -c StringEquationFuncs.cpp $@ $(CXXFLAGS)
+StringEquationFuncs.o: StringEquationFuncs.cpp
+	$(CXX) -c $^ -o $@ $(CXXFLAGS)
 
-TestingMode.o: 		 TestingMode.cpp       TestingMode.h \
-			   DoubleComparisons.cpp DoubleComparisons.h \
-						  Solver.cpp 			Solver.h \
-						  Errors.cpp 			Errors.h
-	$(CXX) -c TestingMode.cpp $@ $(CXXFLAGS)
+TestingMode.o: TestingMode.cpp
+	$(CXX) -c $^ -o $@ $(CXXFLAGS)
 
-main.o: 		  main.cpp                  \
-		InputAndOutput.cpp InputAndOutput.h \
-				Solver.cpp		   Solver.h \
-		   TestingMode.cpp 	  TestingMode.h \
-		   		Errors.cpp 		   Errors.h
-	$(CXX) -c main.cpp $@ $(CXXFLAGS)
+main.o: main.cpp
+	$(CXX) -c $^ -o $@ $(CXXFLAGS)
 
-Errors.o: Errors.cpp Errors.h
-	$(CXX) -c Errors.cpp $@ $(CXXFLAGS)
+Errors.o: Errors.cpp
+	$(CXX) -c $^ -o $@ $(CXXFLAGS)
 
 
 .PHONY: clean

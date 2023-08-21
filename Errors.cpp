@@ -51,6 +51,7 @@ int PrintErrors(Errors errors) {
             break;
         case Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT:
             printf("User quit the program\n");
+            break;
         case Errors::UNKNOWN_COMMAND_LINE_FLAG:
             perror("Unknown command line flag given\n"
                    "read available command line flags in README");
