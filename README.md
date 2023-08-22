@@ -3,7 +3,7 @@ This program can solve quadratic equations.
 It has different modes of working (command line flags):
 1) -f - reading from file.
 2) -c - reading from command line.
-3) -s - reading from standard input (It is flag by standard)
+3) -s - reading from standard input 
 4) -t - testing mode
 5) -eq - program reads equation and solves it
 
