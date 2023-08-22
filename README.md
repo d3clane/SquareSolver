@@ -7,6 +7,8 @@ It has different modes of working (command line flags):
 4) -t - testing mode
 5) -eq - program reads equation and solves it
 
+If -eq is not specified program is reading only 3 coefficients of the equation.
+
 > [!NOTE]
 > user may mix flags and use them together
 
@@ -31,8 +33,9 @@ It has different modes of working (command line flags):
 1) `./quadratic_Solver -c -f filename.txt` (reading file name from command line)
 2) `./quadratic_Solver -c -eq "5x^2 + 3x + 2 + 9x^2 = 78x - 21"` (reading equation from command line)
 3) `./quadratic_Solver` (program will ask about coefficients in standard input)
-4) `./quadric_Solver` (program will ask about file name in standard input)
-5) `./quadric_Solver -t`
+4) `./quadratic_Solver` (program will ask about file name in standard input)
+5) `./quadratic_Solver -t`
+6) `./quadratic_Solver -c 5 -2 3` - solves equation with coefficients 5x^2 - 2x + 3 = 0
 
 ### Equation mode:
 
