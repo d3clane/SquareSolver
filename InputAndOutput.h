@@ -39,20 +39,20 @@ extern CommandLineFlags commandLineFlags; ///< constant contains command line fl
 
 ///< -f getting input from file (if "-c" flag is added, file name have to be in command line, \
 ///< otherwise program reads the file name from the standard input).
-const static char *_FILE_FlAG                =  "-f";
+const extern char *_FILE_FlAG;
 
 ///< -c getting input from commandline
-const static char *_COMMAND_LINE_FLAG        =  "-c";
+const extern char *_COMMAND_LINE_FLAG;
 
 ///< -s getting input from stdin. this flag is used if "-c" is not specified. \
 ///< Could be used with "-f" to read file name from the standard input
-const static char *_STDIN_FLAG               =  "-s";
+const extern char *_STDIN_FLAG;
 
 /// < -t program enters testing mode
-const static char *_TEST_MODE_FLAG           =  "-t";
+const extern char *_TEST_MODE_FLAG;
 
 ///< program reads equation not only coefficients
-const static char *_EQUATION_INPUT_MODE_FLAG = "-eq";
+const extern char *_EQUATION_INPUT_MODE_FLAG;
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ const static char *_EQUATION_INPUT_MODE_FLAG = "-eq";
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadInput(int argc, const char *argv[], double *a, double *b, double *c);
+Errors ReadInput(const int argc, const char *argv[], double *a, double *b, double *c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ Errors ReadInput(int argc, const char *argv[], double *a, double *b, double *c);
 /// \param [in] argc number of arguments in argv
 /// \param [in] argv command line arguments
 /// \return command line flags
-CommandLineFlags ReadCommandLineFlags(int argc, const char *argv[]);
+CommandLineFlags ReadCommandLineFlags(const int argc, const char *argv[]);
 
 //---------------------------------------------------------------------------------------------------------------------
 /// \brief scans coefficients for quadratic equation ax^2 + bx + c from standard input
@@ -102,7 +102,7 @@ Errors ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
 /// \param [out] name storage for file name
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadFileNameFromStdin(char *name, size_t size);
+Errors ReadFileNameFromStdin(char *name, const size_t size);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -113,7 +113,7 @@ Errors ReadFileNameFromStdin(char *name, size_t size);
 /// \param [out] name storage for file name
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadFileNameFromCommandLine(int argc, const char *argv[], char *name, size_t size);
+Errors ReadFileNameFromCommandLine(const int argc, const char *argv[], char *name, const size_t size);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ Errors ReadFileNameFromCommandLine(int argc, const char *argv[], char *name, siz
 /// \param [in] x1 root number 1
 /// \param [in] x2 root number 2
 /// \return 0 if printing is successful otherwise not 0
-Errors PrintRoots(NumberOfRoots numberOfRoots, double x1, double x2);
+Errors PrintRoots(const NumberOfRoots numberOfRoots, const double x1, const double x2);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -136,7 +136,7 @@ Errors PrintRoots(NumberOfRoots numberOfRoots, double x1, double x2);
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c);
+Errors ReadCoeffsFromCommandLine(const int argc, const char *argv[], double *a, double *b, double *c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -148,7 +148,7 @@ Errors ReadCoeffsFromCommandLine(int argc, const char *argv[], double *a, double
 /// \param [out] b  linear coefficient
 /// \param [out] c  free coefficient
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadEquationCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c);
+Errors ReadEquationCoeffsFromCommandLine(const int argc, const char *argv[], double *a, double *b, double *c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -178,7 +178,7 @@ Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
 /// \param [out] name
 /// \param [in] size
 /// \return 0 if reading is successful otherwise not 0
-Errors Fgets_s(char *name, size_t size);
+Errors Fgets_s(char *name, const size_t size);
 
 //---------------------------------------------------------------------------------------------------------------------
 

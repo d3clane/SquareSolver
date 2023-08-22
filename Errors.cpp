@@ -77,7 +77,7 @@ int PrintErrors(const Errors errors) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors CheckQuadraticEquationCoefficientsIsFinite(Errors error, const double a, const double b, const double c) {
+Errors CheckQuadraticEquationCoefficientsIsFinite(const Errors error, const double a, const double b, const double c) {
     if (error != Errors::NO_ERRORS) {
         return error;
     }

@@ -33,7 +33,7 @@ void SkipSymbols();
 ///
 /// \param [in] c
 /// \return true (1) if c is a sign otherwise false (0)
-int IsSign(char c);
+int IsSign(const char c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ int IsSign(char c);
 /// If the char is not a sign returns char without changes
 /// \param [in] c character to change
 /// \return the opposite sign if c is a sign otherwise return c
-char ChangeSign(char c);
+char ChangeSign(const char c);
 
 //---------------------------------------------------------------------------------------------------------------------
 

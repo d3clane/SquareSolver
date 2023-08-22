@@ -4,7 +4,7 @@
 
 #include "DoubleComparisons.h"
 
-ComparisonResult Compare(double a, double b) {
+ComparisonResult Compare(const double a, const double b) {
     ComparisonResult result = EQUAL;
 
     if (b - a > EPS) {

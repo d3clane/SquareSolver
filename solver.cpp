@@ -2,7 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------------
 
-enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *x1, double *x2) {
+enum NumberOfRoots SolveQuadraticEquation(const double a, const double b, const double c, double *x1, double *x2) {
     assert(isfinite(a));
     assert(isfinite(b));
     assert(isfinite(c));
@@ -40,7 +40,7 @@ enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *
 
 //---------------------------------------------------------------------------------------------------------------------
 
-NumberOfRoots SolveLinearEquation(double a, double b, double *x1) {
+NumberOfRoots SolveLinearEquation(const double a, const double b, double *x1) {
     assert(isfinite(a));
     assert(isfinite(b));
 
@@ -57,7 +57,7 @@ NumberOfRoots SolveLinearEquation(double a, double b, double *x1) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-NumberOfRoots ConvertNumberOfRootsToEnum(int numberOfRoots) {
+NumberOfRoots ConvertNumberOfRootsToEnum(const int numberOfRoots) {
     switch (numberOfRoots) {
         case 0:
             return ZERO_ROOTS;
@@ -72,7 +72,7 @@ NumberOfRoots ConvertNumberOfRootsToEnum(int numberOfRoots) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-const char *ConvertEnumToString(NumberOfRoots numberOfRoots) {
+const char *ConvertEnumToString(const NumberOfRoots numberOfRoots) {
     switch (numberOfRoots) {
         case ZERO_ROOTS:
             return "zero roots";

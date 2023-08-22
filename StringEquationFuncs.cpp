@@ -17,14 +17,14 @@ Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double
     *a = *b = *c = 0;
     static char copyEquation[2 * MAX_EQUATION_SIZE];
 
-    Errors errors = CheckEquation(equation);
-    if (errors != Errors::NO_ERRORS) {
-        return errors;
-    }
-
     strcpy(copyEquation, equation);
 
     DeleteSpaces(copyEquation);
+
+    Errors errors = CheckEquation(copyEquation);
+    if (errors != Errors::NO_ERRORS) {
+        return errors;
+    }
 
     errors = TransposeEquation(copyEquation);
     if (errors != Errors::NO_ERRORS) {
@@ -174,6 +174,7 @@ Errors TransposeEquation(char *copyEquation) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
+// spaces have to be deleted
 Errors CheckEquation(const char *equationToCheck) {
     assert(equationToCheck != NULL);
 
@@ -182,14 +183,17 @@ Errors CheckEquation(const char *equationToCheck) {
         if (
                 (strchr("^.", *equation) != NULL && !isdigit(*(equation + 1)))
                 ||
-                (!isnumber(*equation) && !isalpha(*equation) && !isspace(*equation) &&
-                 strchr(VALID_NON_DIGITS, *equation) == NULL)
+                (!isnumber(*equation) && !isalpha(*equation) && strchr(VALID_NON_DIGITS, *equation) == NULL)
                 ||
                 (strchr(VALID_NON_DIGITS, *equation) != NULL && strchr(VALID_NON_DIGITS, *(equation + 1)) != NULL)
                 ||
                 (*equation == '^' && (equation == equationToCheck || !isalpha(*(equation - 1))))
                 ||
                 (*equation == 'e' && (equation == equationToCheck || !isdigit(*(equation - 1))) && !isdigit(*(equation + 1)))
+                ||
+                (IsSign(*equation) && (!isdigit(*(equation + 1)) && !isalpha(*(equation + 1))))
+                ||
+                (isalpha(*equation) && isalpha(*(equation + 1)))
                 ) {
             return Errors::INVALID_EQUATION_FORMAT;
         }

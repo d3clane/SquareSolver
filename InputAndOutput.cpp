@@ -15,9 +15,19 @@ static Errors StrToDouble(const char *str, double *val);
 
 CommandLineFlags commandLineFlags = {0};
 
+const char *_FILE_FlAG                =  "-f";
+
+const char *_COMMAND_LINE_FLAG        =  "-c";
+
+const char *_STDIN_FLAG               =  "-s";
+
+const char *_TEST_MODE_FLAG           =  "-t";
+
+const char *_EQUATION_INPUT_MODE_FLAG = "-eq";
+
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadInput(int argc, const char *argv[], double *a, double *b, double *c) {
+Errors ReadInput(const int argc, const char *argv[], double *a, double *b, double *c) {
     assert(a    != NULL);
     assert(b    != NULL);
     assert(c    != NULL);
@@ -68,7 +78,7 @@ Errors ReadInput(int argc, const char *argv[], double *a, double *b, double *c) 
 
 //---------------------------------------------------------------------------------------------------------------------
 
-CommandLineFlags ReadCommandLineFlags(int argc, const char *argv[]) {
+CommandLineFlags ReadCommandLineFlags(const int argc, const char *argv[]) {
     assert(argv != NULL);
 
     for (int i = 0; i < argc; ++i) {
@@ -97,7 +107,7 @@ CommandLineFlags ReadCommandLineFlags(int argc, const char *argv[]) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c) {
+Errors ReadCoeffsFromCommandLine(const int argc, const char *argv[], double *a, double *b, double *c) {
     assert(a    != NULL);
     assert(b    != NULL);
     assert(c    != NULL);
@@ -121,7 +131,7 @@ Errors ReadCoeffsFromCommandLine(int argc, const char *argv[], double *a, double
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadEquationCoeffsFromCommandLine(int argc, const char *argv[], double *a, double *b, double *c) {
+Errors ReadEquationCoeffsFromCommandLine(const int argc, const char *argv[], double *a, double *b, double *c) {
     assert(a    != NULL);
     assert(b    != NULL);
     assert(c    != NULL);
@@ -142,7 +152,7 @@ Errors ReadEquationCoeffsFromCommandLine(int argc, const char *argv[], double *a
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadFileNameFromCommandLine(int argc, const char *argv[], char *name, size_t size) {
+Errors ReadFileNameFromCommandLine(const int argc, const char *argv[], char *name, const size_t size) {
     assert(name != NULL);
     assert(argv != NULL);
 
@@ -225,7 +235,7 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadFileNameFromStdin(char *name, size_t size) {
+Errors ReadFileNameFromStdin(char *name, const size_t size) {
     assert(name != NULL);
 
     printf("Print file name with the length less than %zu (or EOF to quit): \n", size);
@@ -273,7 +283,7 @@ Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors PrintRoots(NumberOfRoots numberOfRoots, double x1, double x2) {
+Errors PrintRoots(const NumberOfRoots numberOfRoots, const double x1, const double x2) {
 
     switch (numberOfRoots) {
         case ZERO_ROOTS:
@@ -362,7 +372,7 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp) 
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors Fgets_s(char *name, size_t size) {
+Errors Fgets_s(char *name, const size_t size) {
     assert(name != NULL);
 
     if (fgets(name, (int) size, stdin) == NULL) {

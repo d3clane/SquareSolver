@@ -54,6 +54,6 @@ int PrintErrors(const Errors errors);
 /// \param [in] b linear coefficient
 /// \param [in] c free coefficient
 /// \return if error already contains and error - error. Else checks if coefficients is finite and returns
-Errors CheckQuadraticEquationCoefficientsIsFinite(Errors error, const double a, const double b, const double c);
+Errors CheckQuadraticEquationCoefficientsIsFinite(const Errors error, const double a, const double b, const double c);
 
 #endif

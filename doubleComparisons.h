@@ -30,7 +30,7 @@ enum ComparisonResult {
 /// \param [in] a first value
 /// \param [in] b second value
 /// \return enum ComparisonResult - result of comparing (LESS / EQUAL / GREATER)
-ComparisonResult Compare(double a, double b);
+ComparisonResult Compare(const double a, const double b);
 
 //--------------------------------------------------------------------------------------------------------------------
 
