@@ -41,4 +41,7 @@ If -eq is not specified program is reading only 3 coefficients of the equation.
 
 User can use different namings of x and mix them:  
 `./quadratic_Solver -c -eq "5z^2 + 3x - 2 = 5y"`.  
-Program will solve this equation as "5x^2 + 3x - 2 = 5x"
+Program will solve this equation as "5x^2 + 3x - 2 = 5x"  
+
+> [!WARNING]
+> letter e should not be used as a name. It would lead to undefined behaviour.
