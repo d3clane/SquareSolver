@@ -39,6 +39,6 @@ If -eq is not specified program is reading only 3 coefficients of the equation.
 
 ### Equation mode:
 
-User can use different namings of x and mix them: \n
-`./quadratic_Solver -c -eq "5z^2 + 3x - 2 = 5y"`. \n
+User can use different namings of x and mix them: '\n'
+`./quadratic_Solver -c -eq "5z^2 + 3x - 2 = 5y"`. '\n'
 Program will solve this equation as "5x^2 + 3x - 2 = 5x"
