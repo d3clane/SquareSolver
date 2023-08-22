@@ -4,7 +4,9 @@
 
 #include "Errors.h"
 
-int PrintErrors(Errors errors) {
+//---------------------------------------------------------------------------------------------------------------------
+
+int PrintErrors(const Errors errors) {
     switch (errors) {
         case Errors::NO_ERRORS:
             return 0;
@@ -62,7 +64,29 @@ int PrintErrors(Errors errors) {
         case Errors::INVALID_STRING_NO_ENDING:
             perror("Invalid string: no ending ('\\0')");
             break;
+        case Errors::DOUBLE_IS_OUT_OF_RANGE:
+            perror("Double is out of range");
+            break;
+        default:
+            perror("No such error");
+            break;
     }
 
     return 1;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+
+Errors CheckQuadraticEquationCoefficientsIsFinite(Errors error, const double a, const double b, const double c) {
+    if (error != Errors::NO_ERRORS) {
+        return error;
+    }
+
+    if (!isfinite(a) || !isfinite(b) || !isfinite(c)) {
+        return Errors::DOUBLE_IS_OUT_OF_RANGE;
+    }
+
+    return error;
+}
+
+//---------------------------------------------------------------------------------------------------------------------

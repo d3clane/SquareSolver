@@ -32,7 +32,7 @@ enum NumberOfRoots {
 ///
 /// \param [in] numberOfRoots number of roots
 /// \return number of roots enum type
-enum NumberOfRoots ConvertNumberOfRootsToEnum(int numberOfRoots);
+NumberOfRoots ConvertNumberOfRootsToEnum(int numberOfRoots);
 
 //--------------------------------------------------------------------------------------------------------------------
 /// \brief converts enum NumberOfRoots to string
@@ -52,7 +52,7 @@ const char *ConvertEnumToString(enum NumberOfRoots numberOfRoots);
 /// \param [out] x1 pointer to storage for root1
 /// \param [out] x2 pointer to storage for root2
 /// \return number of roots
-enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *x1, double *x2);
+NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *x1, double *x2);
 
 //--------------------------------------------------------------------------------------------------------------------
 /// \brief solves linear equation
@@ -61,7 +61,7 @@ enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *
 /// \param [in] b free coefficient
 /// \param [out] x1 pointer to the storage for the root
 /// \return number of roots
-enum NumberOfRoots SolveLinearEquation(double a, double b, double *x1);
+NumberOfRoots SolveLinearEquation(double a, double b, double *x1);
 
 //--------------------------------------------------------------------------------------------------------------------
 #endif //SOLVER_H

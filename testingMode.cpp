@@ -6,6 +6,8 @@
 
 static inline void Swap(double *a, double *b);
 
+//---------------------------------------------------------------------------------------------------------------------
+
 Errors Testing() {
     FILE *fp = fopen(FILE_NAME, FILE_MODE);
 
@@ -24,8 +26,8 @@ Errors Testing() {
     int numberOfSuccessfullyReadValues = fscanf(fp, "%d%lf%lf%lf%lf%lf", &numberOfRoots, &a, &b, &c, &testX1, &testX2);
     int testNumber = 1;
     while (numberOfSuccessfullyReadValues == haveToReadValuesAtOnce) {
-        enum NumberOfRoots myNumberOfRoots = SolveQuadraticEquation(a, b, c, &myX1, &myX2);
-        enum NumberOfRoots testNumberOfRoots = ConvertNumberOfRootsToEnum(numberOfRoots);
+        NumberOfRoots myNumberOfRoots = SolveQuadraticEquation(a, b, c, &myX1, &myX2);
+        NumberOfRoots testNumberOfRoots = ConvertNumberOfRootsToEnum(numberOfRoots);
 
         if (testNumberOfRoots != myNumberOfRoots) {
             printf("Test %d: number of roots do not match\n", testNumber);
@@ -43,7 +45,7 @@ Errors Testing() {
                         printf("Test %d: test is OK\n", testNumber);
                     } else {
                         printf("Test %d failed:\nprogram result: %lf  test value: %lf\n",
-                                testNumber, myX1, testX1);
+                               testNumber, myX1, testX1);
                     }
 
                     break;
@@ -54,7 +56,7 @@ Errors Testing() {
                         printf("Test %d: test is OK\n", testNumber);
                     } else {
                         printf("Test %d failed:\nprogram result: %lf and %lf  test value: %lf and %lf\n",
-                                testNumber, myX1, myX2, testX1, testX2);
+                               testNumber, myX1, myX2, testX1, testX2);
                     }
 
                     break;
@@ -73,6 +75,8 @@ Errors Testing() {
 
     return Errors::NO_ERRORS;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
 
 static inline void Swap(double *a, double *b) {
     double tmp = NAN;

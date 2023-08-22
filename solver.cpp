@@ -1,9 +1,17 @@
 #include "Solver.h"
 
+//---------------------------------------------------------------------------------------------------------------------
+
 enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *x1, double *x2) {
+    assert(isfinite(a));
+    assert(isfinite(b));
+    assert(isfinite(c));
+
     assert(x1 != NULL);
     assert(x2 != NULL);
-    enum NumberOfRoots numberOfRoots = ZERO_ROOTS;
+    assert(x1 != x2);
+
+    NumberOfRoots numberOfRoots = ZERO_ROOTS;
 
     if (Compare(a, 0.0) == EQUAL) {
         numberOfRoots = SolveLinearEquation(b, c, x1);
@@ -30,8 +38,15 @@ enum NumberOfRoots SolveQuadraticEquation(double a, double b, double c, double *
     return numberOfRoots;
 }
 
-enum NumberOfRoots SolveLinearEquation(double a, double b, double *x1) {
-    if (Compare(a, b) == EQUAL) {
+//---------------------------------------------------------------------------------------------------------------------
+
+NumberOfRoots SolveLinearEquation(double a, double b, double *x1) {
+    assert(isfinite(a));
+    assert(isfinite(b));
+
+    assert(x1 != NULL);
+
+    if (Compare(a, 0.0) == EQUAL) {
         return Compare(b, 0.0) == EQUAL ? INF_ROOTS : ZERO_ROOTS;
     }
 
@@ -40,7 +55,9 @@ enum NumberOfRoots SolveLinearEquation(double a, double b, double *x1) {
     return ONE_ROOT;
 }
 
-enum NumberOfRoots ConvertNumberOfRootsToEnum(int numberOfRoots) {
+//---------------------------------------------------------------------------------------------------------------------
+
+NumberOfRoots ConvertNumberOfRootsToEnum(int numberOfRoots) {
     switch (numberOfRoots) {
         case 0:
             return ZERO_ROOTS;
@@ -53,7 +70,9 @@ enum NumberOfRoots ConvertNumberOfRootsToEnum(int numberOfRoots) {
     }
 }
 
-const char *ConvertEnumToString(enum NumberOfRoots numberOfRoots) {
+//---------------------------------------------------------------------------------------------------------------------
+
+const char *ConvertEnumToString(NumberOfRoots numberOfRoots) {
     switch (numberOfRoots) {
         case ZERO_ROOTS:
             return "zero roots";
@@ -66,3 +85,4 @@ const char *ConvertEnumToString(enum NumberOfRoots numberOfRoots) {
     }
 }
 
+//---------------------------------------------------------------------------------------------------------------------

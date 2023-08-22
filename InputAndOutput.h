@@ -123,7 +123,7 @@ Errors ReadFileNameFromCommandLine(int argc, const char *argv[], char *name, siz
 /// \param [in] x1 root number 1
 /// \param [in] x2 root number 2
 /// \return 0 if printing is successful otherwise not 0
-Errors PrintRoots(enum NumberOfRoots numberOfRoots, double x1, double x2);
+Errors PrintRoots(NumberOfRoots numberOfRoots, double x1, double x2);
 
 //---------------------------------------------------------------------------------------------------------------------
 

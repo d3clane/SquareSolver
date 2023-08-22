@@ -6,10 +6,12 @@
 
 static const char *VALID_NON_DIGITS = "+-.^=";
 
+//---------------------------------------------------------------------------------------------------------------------
+
 Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double *c) {
-    assert(a != NULL);
-    assert(b != NULL);
-    assert(c != NULL);
+    assert(a        != NULL);
+    assert(b        != NULL);
+    assert(c        != NULL);
     assert(equation != NULL);
 
     *a = *b = *c = 0;
@@ -30,6 +32,7 @@ Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double
     }
 
     char *posPtr = copyEquation;
+
     while (*posPtr != '\0') {
         double tmpVal = NAN;
         char *tmpPos = NULL;
@@ -55,16 +58,25 @@ Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double
         if (!IsSign(*posPtr) && *posPtr != '\0') {
             posPtr++;
         }
+
+        if (posPtr - copyEquation == 12) {
+            break;
+        }
     }
 
-    return errors;
+    return CheckQuadraticEquationCoefficientsIsFinite(errors, *a, *b, *c);
 }
 
+//---------------------------------------------------------------------------------------------------------------------
 
 //endPtr = pointer to the last symbol of the addend, equation have to be after
 // 1) deleting spaces with DeleteSpaces()
 // 2) transposing with function TransposeEquation()
-enum PowerOfX GetXPowAndCoeff(const char *x, double *target, char **endPtr) {
+PowerOfX GetXPowAndCoeff(const char *x, double *target, char **endPtr) {
+    assert(x      != NULL);
+    assert(target != NULL);
+    assert(endPtr != NULL);
+
     static const int BASE = 10;
     *target = strtod(x, endPtr); //endPtr could be on 'x' or on next sign (in case of free coefficient) or ending
 
@@ -81,6 +93,8 @@ enum PowerOfX GetXPowAndCoeff(const char *x, double *target, char **endPtr) {
     long power = strtol(*endPtr, endPtr, BASE);
     return (power == 2 ? POWER_TWO : INVALID_POWER);
 }
+
+//---------------------------------------------------------------------------------------------------------------------
 
 //spaces have to be deleted
 Errors TransposeEquation(char *copyEquation) {
@@ -125,6 +139,11 @@ Errors TransposeEquation(char *copyEquation) {
 
     posPtr++;
 
+    if (posPtr == endPointer) {
+        return Errors::NO_ERRORS;
+    }
+
+
     if (isalpha(*posPtr) || isdigit(*posPtr)) {
         *tmpPos = '-';
         tmpPos++;
@@ -152,7 +171,13 @@ Errors TransposeEquation(char *copyEquation) {
     return Errors::NO_ERRORS;
 }
 
-Errors CheckEquation(const char *equation) {
+
+//---------------------------------------------------------------------------------------------------------------------
+
+Errors CheckEquation(const char *equationToCheck) {
+    assert(equationToCheck != NULL);
+
+    const char *equation = equationToCheck;
     while (*equation != '\0') {
         if (
                 (strchr("^.", *equation) != NULL && !isdigit(*(equation + 1)))
@@ -161,6 +186,10 @@ Errors CheckEquation(const char *equation) {
                  strchr(VALID_NON_DIGITS, *equation) == NULL)
                 ||
                 (strchr(VALID_NON_DIGITS, *equation) != NULL && strchr(VALID_NON_DIGITS, *(equation + 1)) != NULL)
+                ||
+                (*equation == '^' && (equation == equationToCheck || !isalpha(*(equation - 1))))
+                ||
+                (*equation == 'e' && (equation == equationToCheck || !isdigit(*(equation - 1))) && !isdigit(*(equation + 1)))
                 ) {
             return Errors::INVALID_EQUATION_FORMAT;
         }
@@ -170,3 +199,5 @@ Errors CheckEquation(const char *equation) {
 
     return Errors::NO_ERRORS;
 }
+
+//---------------------------------------------------------------------------------------------------------------------

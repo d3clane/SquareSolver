@@ -62,7 +62,7 @@ Errors TransposeEquation(char *copyEquation);
 /// // tmpVal = 2.2
 /// // endPtr = "-3=0"
 /// ~~~~~~~~~~~~~~~~~~~~~
-enum PowerOfX GetXPowAndCoeff(const char *x, double *target, char **endPtr);
+PowerOfX GetXPowAndCoeff(const char *x, double *target, char **endPtr);
 
 //---------------------------------------------------------------------------------------------------------------------
 

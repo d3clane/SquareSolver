@@ -10,7 +10,9 @@
 #define ERRORS_H
 
 #include <stdio.h>
+#include <math.h>
 
+//---------------------------------------------------------------------------------------------------------------------
 
 /// \brief Errors than may occur during the program working
 enum class Errors {
@@ -32,12 +34,26 @@ enum class Errors {
     UNKNOWN_COMMAND_LINE_FLAG, ///< error occurred because of unknown command line flag given
     READING_FROM_STDIN_ERROR, ///< error occurred while reading from stdin
     INVALID_STRING_NO_ENDING, ///< error occurs when given string has no ending
+    DOUBLE_IS_OUT_OF_RANGE, ///< error occurs when double is out of range
 };
+
+//---------------------------------------------------------------------------------------------------------------------
 
 /// \brief print errors
 ///
 /// \param [in] errors error to print
 /// \return 0 if program doesn't have serious errors otherwise 1
-int PrintErrors(Errors errors);
+int PrintErrors(const Errors errors);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief check quadratic equation coefficients if they are finite
+/// \details if error already contains an error this error returns
+/// \param [in] error error enum with errors that program have already
+/// \param [in] a quadratic coefficeint
+/// \param [in] b linear coefficient
+/// \param [in] c free coefficient
+/// \return if error already contains and error - error. Else checks if coefficients is finite and returns
+Errors CheckQuadraticEquationCoefficientsIsFinite(Errors error, const double a, const double b, const double c);
 
 #endif

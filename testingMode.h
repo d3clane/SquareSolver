@@ -41,7 +41,7 @@ static const char *FILE_MODE = "r";
   * if number of roots is infinite any 2 values should be mentioned as roots. \n
   * \return Errors
   */
-  Errors Testing();
+ Errors Testing();
 
 //---------------------------------------------------------------------------------------------------------------------
 
