@@ -33,3 +33,8 @@ It has different modes of working (command line flags):
 3) `./quadratic_Solver` (program will ask about coefficients in standard input)
 4) `./quadric_Solver` (program will ask about file name in standard input)
 5) `./quadric_Solver -t`
+
+### Equation mode:
+
+User can use different namings of x and mix them:
+`./quadratic_Solver -c -eq "5z^2 + 3x - 2 = 5y"`. Program will solve this equation as "5x^2 + 3x - 2 = 5x"
