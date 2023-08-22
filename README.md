@@ -9,16 +9,22 @@ It has different modes of working (command line flags):
 
 > [!NOTE]
 > user may mix flags and use them together
+
 > [!NOTE]
 > testing mode can't be mixed with other mods.
+
 > [!NOTE]
 > -s flag is flag by standard (used if no reading flags are specified)
+
 > [!IMPORTANT]
 > when using -c flag with -f user have to write file name right after -f flag in command line
+
 > [!IMPORTANT]
 > when using -c flag with -eq user have to write file name right after -eq flag in command line
+
 > [!IMPORTANT]
 > when using -c flag with -f user have to write file name right after -f flag in command line
+
 
 ## Examples:
 1) `./quadratic_Solver -c -f filename.txt` (reading file name from command line)
