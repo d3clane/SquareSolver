@@ -64,13 +64,19 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
     }
 
     if (commandLineFlags.readFromStdin) {
+
         if (commandLineFlags.equationInputMode) inputError = ReadEquationCoeffsFromStdin(a, b, c);
         else inputError = ReadCoeffsFromStdin(a, b, c);
+
     } else if (commandLineFlags.readFromCommandLine) {
+
         if (commandLineFlags.equationInputMode) inputError = ReadEquationCoeffsFromCommandLine(argc, argv, a, b, c);
         else inputError = ReadCoeffsFromCommandLine(argc, argv, a, b, c);
+
     } else {
+
         return Errors::UNKNOWN_COMMAND_LINE_FLAG;
+
     }
 
     return inputError;

@@ -8,6 +8,10 @@ static const char *VALID_NON_DIGITS = "+-.^=";
 
 //---------------------------------------------------------------------------------------------------------------------
 
+static void TransposeOneSymbol(char **tmpPos, char **posPtr, bool haveToChangeSign);
+
+//---------------------------------------------------------------------------------------------------------------------
+
 Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double *c) {
     assert(a        != NULL);
     assert(b        != NULL);
@@ -120,21 +124,8 @@ Errors TransposeEquation(char *copyEquation) {
         *tmpPos = '+';
         tmpPos++;
     }
-    // TODO обернуть алгоритм из вайла внутри в функцию, так как вставляется дважды (в следующем вайле тоже)
     while (posPtr < equalPointer) {
-        if (IsSign(*posPtr) || isdigit(*posPtr)) { //example: +2x
-            *tmpPos = *posPtr;
-        } else if (isalpha(*posPtr) && isdigit(*(posPtr - 1))) { //example: 2x
-            *tmpPos = *posPtr;
-        } else if (isalpha(*posPtr) && !isdigit(*(posPtr - 1))) { //example: +x, x
-            *tmpPos = '1';
-            ++tmpPos;
-            *tmpPos = *posPtr;
-        } else {
-            *tmpPos = *posPtr;
-        }
-        ++tmpPos;
-        ++posPtr;
+        TransposeOneSymbol(&tmpPos, &posPtr, 0);
     }
 
     posPtr++;
@@ -149,19 +140,7 @@ Errors TransposeEquation(char *copyEquation) {
         tmpPos++;
     }
     while (posPtr < endPointer) {
-        if (IsSign(*posPtr) || isdigit(*posPtr)) { //example: +2x
-            *tmpPos = ChangeSign(*posPtr);
-        } else if (isalpha(*posPtr) && isdigit(*(posPtr - 1))) { //example: 2x
-            *tmpPos = *posPtr;
-        } else if (isalpha(*posPtr) && !isdigit(*(posPtr - 1))) { //example: +x, x
-            *tmpPos = '1';
-            ++tmpPos;
-            *tmpPos = *posPtr;
-        } else {
-            *tmpPos = *posPtr;
-        }
-        ++tmpPos;
-        ++posPtr;
+        TransposeOneSymbol(&tmpPos, &posPtr, 1);
     }
 
     *tmpPos = '\0';
@@ -202,6 +181,27 @@ Errors CheckEquation(const char *equationToCheck) {
     }
 
     return Errors::NO_ERRORS;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+static void TransposeOneSymbol(char **tmpPos, char **posPtr, bool haveToChangeSign) {
+    if (IsSign(**posPtr) || isdigit(**posPtr)) { //example: +2x
+
+        if (haveToChangeSign) **tmpPos = ChangeSign(**posPtr);
+        else **tmpPos = **posPtr;
+
+    } else if (isalpha(**posPtr) && isdigit(*(*posPtr - 1))) { //example: 2x
+        **tmpPos = **posPtr;
+    } else if (isalpha(**posPtr) && !isdigit(*(*posPtr - 1))) { //example: +x, x
+        **tmpPos = '1';
+        ++(*tmpPos);
+        **tmpPos = **posPtr;
+    } else {
+        **tmpPos = **posPtr;
+    }
+    ++(*tmpPos);
+    ++(*posPtr);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
