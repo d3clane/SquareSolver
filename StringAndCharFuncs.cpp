@@ -26,11 +26,16 @@ void DeleteSpaces(char *string) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-void SkipSymbols() {
-    int ch = getchar();
+int SkipSymbols(FILE *fp) {
+    int cnt = 0;
+    
+    int ch = getc(fp);
     while (ch != '\n' && ch != EOF) {
-        ch = getchar();
+        if (!isblank(ch)) cnt++;
+        ch = getc(fp);
     }
+
+    return cnt;
 }
 
 //---------------------------------------------------------------------------------------------------------------------

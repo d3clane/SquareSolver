@@ -67,6 +67,10 @@ int PrintErrors(const Errors errors) {
         case Errors::DOUBLE_IS_OUT_OF_RANGE:
             perror("Double is out of range");
             break;
+        case Errors::EXTRA_SYMBOLS_IN_LINE:
+            perror("Extra symbols printed by user");
+            return 0;
+            break;
         default:
             perror("No such error");
             break;
@@ -77,16 +81,12 @@ int PrintErrors(const Errors errors) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors CheckQuadraticEquationCoefficientsIsFinite(const Errors error, const double a, const double b, const double c) {
-    if (error != Errors::NO_ERRORS) {
-        return error;
-    }
-
+Errors CheckCoeffsIsFinite(const double a, const double b, const double c) {
     if (!isfinite(a) || !isfinite(b) || !isfinite(c)) {
         return Errors::DOUBLE_IS_OUT_OF_RANGE;
     }
 
-    return error;
+    return Errors::NO_ERRORS;
 }
 
 //---------------------------------------------------------------------------------------------------------------------

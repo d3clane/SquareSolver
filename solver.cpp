@@ -57,21 +57,6 @@ NumberOfRoots SolveLinearEquation(const double a, const double b, double *x1) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-NumberOfRoots ConvertNumberOfRootsToEnum(const int numberOfRoots) {
-    switch (numberOfRoots) {
-        case 0:
-            return ZERO_ROOTS;
-        case 1:
-            return ONE_ROOT;
-        case 2:
-            return TWO_ROOTS;
-        default:
-            return INF_ROOTS;
-    }
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-
 const char *ConvertEnumToString(const NumberOfRoots numberOfRoots) {
     switch (numberOfRoots) {
         case ZERO_ROOTS:

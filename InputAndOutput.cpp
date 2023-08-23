@@ -9,21 +9,20 @@
 static inline Errors MenuInputCoeffs();
 static inline Errors MenuInputEquation();
 static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp);
-static Errors StrToDouble(const char *str, double *val);
 
 //---------------------------------------------------------------------------------------------------------------------
 
 CommandLineFlags commandLineFlags = {0};
 
-const char *_FILE_FlAG                =  "-f";
+const char *FILE_FlAG                =  "-f";
 
-const char *_COMMAND_LINE_FLAG        =  "-c";
+const char *COMMAND_LINE_FLAG        =  "-c";
 
-const char *_STDIN_FLAG               =  "-s";
+const char *STDIN_FLAG               =  "-s";
 
-const char *_TEST_MODE_FLAG           =  "-t";
+const char *TEST_MODE_FLAG           =  "-t";
 
-const char *_EQUATION_INPUT_MODE_FLAG = "-eq";
+const char *EQUATION_INPUT_MODE_FLAG = "-eq";
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -37,8 +36,8 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
 
     FILE *fp = NULL;
     static const size_t FILE_NAME_LENGTH = 64;
-    Errors inputError = Errors::NO_ERRORS;
     static char fileName[FILE_NAME_LENGTH];
+    Errors inputError = Errors::NO_ERRORS;
 
     if (commandLineFlags.readFromFile) {
         if (commandLineFlags.readFromCommandLine) {
@@ -88,15 +87,15 @@ CommandLineFlags ReadCommandLineFlags(const int argc, const char *argv[]) {
     assert(argv != NULL);
 
     for (int i = 0; i < argc; ++i) {
-        if (strcmp(argv[i], _FILE_FlAG) == 0) {
+        if (strcmp(argv[i], FILE_FlAG) == 0) {
             commandLineFlags.readFromFile = 1;
-        } else if (strcmp(argv[i], _COMMAND_LINE_FLAG) == 0) {
+        } else if (strcmp(argv[i], COMMAND_LINE_FLAG) == 0) {
             commandLineFlags.readFromCommandLine = 1;
-        } else if (strcmp(argv[i], _STDIN_FLAG) == 0) {
+        } else if (strcmp(argv[i], STDIN_FLAG) == 0) {
             commandLineFlags.readFromStdin = 1;
-        } else if (strcmp(argv[i], _TEST_MODE_FLAG) == 0) {
+        } else if (strcmp(argv[i], TEST_MODE_FLAG) == 0) {
             commandLineFlags.testMode = 1;
-        } else if (strcmp(argv[i], _EQUATION_INPUT_MODE_FLAG) == 0) {
+        } else if (strcmp(argv[i], EQUATION_INPUT_MODE_FLAG) == 0) {
             commandLineFlags.equationInputMode = 1;
         }
     }
@@ -121,18 +120,16 @@ Errors ReadCoeffsFromCommandLine(const int argc, const char *argv[], double *a, 
 
     Errors readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
     for (int i = 0; i < argc - 3; ++i) { // till (argc - 3) cause also reading (i + 3)
-        if (strcmp(argv[i], _COMMAND_LINE_FLAG) == 0) {
-            readError                                     = StrToDouble(argv[i + 1], a);
-
-            if (readError == Errors::NO_ERRORS) readError = StrToDouble(argv[i + 2], b);
-
-            if (readError == Errors::NO_ERRORS) readError = StrToDouble(argv[i + 3], c);
+        if (strcmp(argv[i], COMMAND_LINE_FLAG) == 0) {
+            if (sscanf(argv[i + 1], "%lf%*c", a) != 1) readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
+            if (sscanf(argv[i + 2], "%lf%*c", b) != 1) readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
+            if (sscanf(argv[i + 3], "%lf%*c", c) != 1) readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
 
             break;
         }
     }
 
-    return CheckQuadraticEquationCoefficientsIsFinite(readError, *a, *b, *c);
+    return readError != Errors::NO_ERRORS ? readError : CheckCoeffsIsFinite(*a, *b, *c);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -146,14 +143,14 @@ Errors ReadEquationCoeffsFromCommandLine(const int argc, const char *argv[], dou
     Errors readError = Errors::READING_EQUATION_FROM_COMMAND_LINE_ERROR;
 
     for (int i = 0; i < argc - 1; ++i) { // till (argc - 3) cause also reading (i + 3)
-        if (strcmp(argv[i], _EQUATION_INPUT_MODE_FLAG) == 0) {
+        if (strcmp(argv[i], EQUATION_INPUT_MODE_FLAG) == 0) {
             readError = ParseQuadraticEquation(argv[i + 1], a, b, c);
 
             break;
         }
     }
 
-    return CheckQuadraticEquationCoefficientsIsFinite(readError, *a, *b, *c);
+    return readError != Errors::NO_ERRORS ? readError : CheckCoeffsIsFinite(*a, *b, *c);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -165,9 +162,10 @@ Errors ReadFileNameFromCommandLine(const int argc, const char *argv[], char *nam
     Errors readError = Errors::READING_FILE_NAME_FROM_COMMAND_LINE_ERROR;
 
     for (int i = 0; i < argc - 1; ++i) {
-        if (strcmp(argv[i], _FILE_FlAG) == 0) {
+        if (strcmp(argv[i], FILE_FlAG) == 0) {
             readError = Errors::NO_ERRORS;
             strncpy(name, argv[i + 1], size - 1);
+            name[size - 1] = '\0';
             break;
         }
     }
@@ -185,25 +183,34 @@ Errors ReadCoeffsFromStdin(double *a, double *b, double *c) {
     static const int NUMBER_OF_READ_VALUES = 3;
 
     Errors quitInput = MenuInputCoeffs(); //quitInput - flag to quit the scan program without getting correct input
-    int scannedVals = fscanf(stdin, "%lf%lf%lf", a, b, c);
-    while (scannedVals != NUMBER_OF_READ_VALUES && quitInput == Errors::NO_ERRORS && scannedVals != EOF) {
+    int scannedVals = 0;
+    char ch = 0;
+
+    while (true) {
+
+        scannedVals = fscanf(stdin, "%lf %lf %lf%c", a, b, c, &ch);
+
+        if ((scannedVals == NUMBER_OF_READ_VALUES + 1 && ch == '\n') ||
+            quitInput != Errors::NO_ERRORS || scannedVals == EOF)
+        {
+            break;
+        }
+
         printf("not valid input\n");
-        SkipSymbols();
+        SkipSymbols(stdin);
 
         quitInput = MenuInputCoeffs();
         if (quitInput != Errors::NO_ERRORS) {
             printf("Quit the program\n");
             break;
         }
-
-        scannedVals = fscanf(stdin, "%lf%lf%lf", a, b, c);
     }
 
     if (scannedVals == EOF) {
         return Errors::READING_COEFFS_FROM_STDIN_ERROR;
     }
 
-    return CheckQuadraticEquationCoefficientsIsFinite(quitInput, *a, *b, *c);
+    return quitInput != Errors::NO_ERRORS ? quitInput : CheckCoeffsIsFinite(*a, *b, *c);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -213,7 +220,7 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c) {
     assert(b != NULL);
     assert(c != NULL);
 
-    static char equation[MAX_EQUATION_SIZE];
+    static char equation[MAX_EQUATION_SIZE] = {0};
 
     Errors quitInput = MenuInputEquation();
     if (fgets(equation, MAX_EQUATION_SIZE, stdin) == NULL) {
@@ -236,7 +243,7 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c) {
         }
     }
 
-    return CheckQuadraticEquationCoefficientsIsFinite(quitInput, *a, *b, *c);
+    return quitInput != Errors::NO_ERRORS ? quitInput : CheckCoeffsIsFinite(*a, *b, *c);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -263,11 +270,11 @@ Errors ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
 
     Errors error = Errors::NO_ERRORS;
 
-    if (fscanf(fp, "%lf%lf%lf", a, b, c) != NUMBER_OF_READ_VALUES) {
+    if (fscanf(fp, "%lf %lf %lf", a, b, c) != NUMBER_OF_READ_VALUES) {
         error = Errors::READING_COEFFS_FROM_FILE_ERROR;
     }
 
-    return CheckQuadraticEquationCoefficientsIsFinite(error, *a, *b, *c);
+    return error != Errors::NO_ERRORS ? error : CheckCoeffsIsFinite(*a, *b, *c);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -284,6 +291,7 @@ Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
         return Errors::READING_EQUATION_FROM_FILE_ERROR;
     }
 
+    
     return ParseQuadraticEquation(equation, a, b, c);
 }
 
@@ -313,28 +321,7 @@ Errors PrintRoots(const NumberOfRoots numberOfRoots, const double x1, const doub
             return Errors::INVALID_NUMBER_OF_ROOTS;
     }
 
-
     return Errors::NO_ERRORS;
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-
-// returns 0 if OK else not 1, return the converted value to *val
-static Errors StrToDouble(const char *str, double *val) {
-    assert(str != NULL);
-    assert(val != NULL);
-
-    const char *endptr = strchr(str, '\0');
-
-    char *ptr = NULL;
-    *val = strtod(str, &ptr);
-
-    return
-            ptr != endptr
-    ?
-            Errors::CONVERTING_STRING_TO_DOUBLE_ERROR
-    :
-            Errors::NO_ERRORS;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -352,6 +339,7 @@ static inline Errors MenuInputCoeffs() {
 
 static inline Errors MenuInputEquation() {
     printf("Print equation format: x^2 + 4x - 2x + 3 = 23 - 17x^2: (or <Enter> to quit) \n");
+    printf("Equation size have to be less than %d", MAX_EQUATION_SIZE);
 
     int ch = getc(stdin);
     ungetc(ch, stdin);
@@ -368,12 +356,8 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp) 
 
     *fp = fopen(name, mode);
 
-    return
-            *fp == NULL
-    ?
-            Errors::FILE_OPENING_ERROR
-    :
-            Errors::NO_ERRORS;
+    return (*fp == NULL) ? Errors::FILE_OPENING_ERROR :
+                           Errors::NO_ERRORS;
 }
 
 //---------------------------------------------------------------------------------------------------------------------

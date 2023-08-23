@@ -37,22 +37,22 @@ extern CommandLineFlags commandLineFlags; ///< constant contains command line fl
 //---------------------------------------------------------------------------------------------------------------------
 /// \brief command line flags
 
-///< -f getting input from file (if "-c" flag is added, file name have to be in command line, \
+///< -f getting input from file (if "-c" flag is added, file name have to be in command line,
 ///< otherwise program reads the file name from the standard input).
-const extern char *_FILE_FlAG;
+const extern char *FILE_FlAG;
 
 ///< -c getting input from commandline
-const extern char *_COMMAND_LINE_FLAG;
+const extern char *COMMAND_LINE_FLAG;
 
-///< -s getting input from stdin. this flag is used if "-c" is not specified. \
+///< -s getting input from stdin. this flag is used if "-c" is not specified.
 ///< Could be used with "-f" to read file name from the standard input
-const extern char *_STDIN_FLAG;
+const extern char *STDIN_FLAG;
 
 /// < -t program enters testing mode
-const extern char *_TEST_MODE_FLAG;
+const extern char *TEST_MODE_FLAG;
 
 ///< program reads equation not only coefficients
-const extern char *_EQUATION_INPUT_MODE_FLAG;
+const extern char *EQUATION_INPUT_MODE_FLAG;
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -182,4 +182,4 @@ Errors Fgets_s(char *name, const size_t size);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#endif
+#endif // INPUT_AND_OUTPUT_H

@@ -25,7 +25,8 @@ void DeleteSpaces(char *string);
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief skip line symbols until the new line or EOF
-void SkipSymbols();
+/// \return number of non blank symbols read
+int SkipSymbols(FILE *fp);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -46,4 +47,4 @@ char ChangeSign(const char c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#endif
+#endif //STRING_FUNCS_H

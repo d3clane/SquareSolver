@@ -6,7 +6,12 @@
 
 static inline void Swap(double *a, double *b);
 
+#define TESTFAILED "Test %d failed:\nprogram result: "
+#define TESTOK "Test %d: test is OK\n"
 //---------------------------------------------------------------------------------------------------------------------
+
+const char *FILE_NAME = "test.txt";
+const char *FILE_MODE = "r";
 
 Errors Testing() {
     FILE *fp = fopen(FILE_NAME, FILE_MODE);
@@ -23,12 +28,12 @@ Errors Testing() {
     double testX1 = NAN, testX2 = NAN;
     double myX1 = NAN, myX2 = NAN;
 
-    int numberOfSuccessfullyReadValues = fscanf(fp, "%d%lf%lf%lf%lf%lf", &numberOfRoots, &a, &b, &c, &testX1, &testX2);
+    int numberOfSuccessfullyReadValues = fscanf(fp, "%d %lf %lf %lf %lf %lf", &numberOfRoots, &a, &b, &c, &testX1, &testX2);
     int testNumber = 1;
     while (numberOfSuccessfullyReadValues == haveToReadValuesAtOnce) {
         NumberOfRoots myNumberOfRoots = SolveQuadraticEquation(a, b, c, &myX1, &myX2);
-        NumberOfRoots testNumberOfRoots = ConvertNumberOfRootsToEnum(numberOfRoots);
-
+        NumberOfRoots testNumberOfRoots = (numberOfRoots >= 0 && numberOfRoots <= 2) ? (NumberOfRoots) numberOfRoots : INF_ROOTS;
+        
         if (testNumberOfRoots != myNumberOfRoots) {
             printf("Test %d: number of roots do not match\n", testNumber);
 
@@ -38,13 +43,13 @@ Errors Testing() {
         } else {
             switch (myNumberOfRoots) {
                 case ZERO_ROOTS:
-                    printf("Test %d: test is OK\n", testNumber);
+                    printf(TESTOK, testNumber);
                     break;
                 case ONE_ROOT:
                     if (Compare(testX1, myX1) == EQUAL) {
-                        printf("Test %d: test is OK\n", testNumber);
+                        printf(TESTOK, testNumber);
                     } else {
-                        printf("Test %d failed:\nprogram result: %lf  test value: %lf\n",
+                        printf(TESTFAILED "%lf  test value: %lf\n",
                                testNumber, myX1, testX1);
                     }
 
@@ -53,22 +58,22 @@ Errors Testing() {
                     if (Compare(testX1, testX2) == GREATER) Swap(&testX1, &testX2); // testX1 <= testX2
 
                     if (Compare(testX1, myX1) == EQUAL && Compare(testX2, myX2) == EQUAL) {
-                        printf("Test %d: test is OK\n", testNumber);
+                        printf(TESTOK, testNumber);
                     } else {
-                        printf("Test %d failed:\nprogram result: %lf and %lf  test value: %lf and %lf\n",
+                        printf(TESTFAILED "%lf and %lf  test values: %lf and %lf\n",
                                testNumber, myX1, myX2, testX1, testX2);
                     }
 
                     break;
                 case INF_ROOTS:
-                    printf("Test %d: test is OK\n", testNumber);
+                    printf(TESTOK, testNumber);
                     break;
                 default:
                     return Errors::INVALID_NUMBER_OF_ROOTS;
             }
         }
 
-        numberOfSuccessfullyReadValues = fscanf(fp, "%d%lf%lf%lf%lf%lf", &numberOfRoots, &a, &b, &c, &testX1, &testX2);
+        numberOfSuccessfullyReadValues = fscanf(fp, "%d %lf %lf %lf %lf %lf", &numberOfRoots, &a, &b, &c, &testX1, &testX2);
 
         testNumber++;
     }
@@ -84,3 +89,6 @@ static inline void Swap(double *a, double *b) {
     *a = *b;
     *b = tmp;
 }
+
+#undef TESTOK
+#undef TESTFAILED

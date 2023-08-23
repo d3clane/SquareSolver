@@ -70,8 +70,8 @@ PowerOfX GetXPowAndCoeff(const char *x, double *target, char **endPtr);
 /// checks if the equation has correct format and can be parsed
 /// \param [in] equation equation to check
 /// \return NO_ERRORS if equation is OK otherwise INVALID_EQUATION_FORMAT
-Errors CheckEquation(const char *equation);
+Errors CheckEquation(char *equation);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#endif
+#endif //STRING_EQUATION_FUNCS_H

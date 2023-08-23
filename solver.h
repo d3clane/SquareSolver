@@ -28,13 +28,6 @@ enum NumberOfRoots {
 };
 
 //--------------------------------------------------------------------------------------------------------------------
-/// \brief converts [int] number of roots to enum NumberOfRoots
-///
-/// \param [in] numberOfRoots number of roots
-/// \return number of roots enum type
-NumberOfRoots ConvertNumberOfRootsToEnum(const int numberOfRoots);
-
-//--------------------------------------------------------------------------------------------------------------------
 /// \brief converts enum NumberOfRoots to string
 ///
 /// \param [in] numberOfRoots number of roots
