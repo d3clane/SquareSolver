@@ -4,8 +4,6 @@
 
 #include "StringEquationFuncs.h"
 
-#define ValidArg *(equation - 1), *(equation + 1)
-
 //---------------------------------------------------------------------------------------------------------------------
 
 static void TransposeOneSymbol(char **tmpPos, char **posPtr, bool haveToChangeSign);
@@ -35,10 +33,9 @@ Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double
     assert(b != NULL);
     assert(c != NULL);
     assert(equation != NULL);
-    *a = *b = *c = 0;
-    static char copyEquation[2 * MAX_EQUATION_SIZE];
 
-    strcpy(copyEquation, equation);
+    static char copyEquation[2 * MAX_EQUATION_SIZE] = "";
+    strncpy(copyEquation, equation, MAX_EQUATION_SIZE);
 
     DeleteSpaces(copyEquation);
     
@@ -51,8 +48,10 @@ Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double
     if (errors != Errors::NO_ERRORS) {
         return errors;
     }
-    printf("%s\n", copyEquation);
+
     char *posPtr = copyEquation;
+
+    *a = *b = *c = 0;
 
     while (*posPtr != '\0') {
         double tmpVal = NAN;
@@ -135,11 +134,11 @@ Errors TransposeEquation(char *copyEquation) {
         equalPointer = endPointer;
     }
 
-    static char tmpEquation[2 * MAX_EQUATION_SIZE];
+    static char tmpEquation[2 * MAX_EQUATION_SIZE] = "";
 
     char *tmpPos = tmpEquation;
     char *posPtr = copyEquation;
-
+    
     if (!IsSign(*posPtr)) {
         *tmpPos = '+';
         tmpPos++;
@@ -149,6 +148,7 @@ Errors TransposeEquation(char *copyEquation) {
     }
 
     if (posPtr >= endPointer) {
+        strcpy(copyEquation, tmpEquation);
         return Errors::NO_ERRORS;
     }
 
@@ -172,6 +172,8 @@ Errors TransposeEquation(char *copyEquation) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
+#define ValidArg *(equation - 1), *(equation + 1)
+
 // spaces have to be deleted
 Errors CheckEquation(char *equationToCheck) {
     assert(equationToCheck != NULL);
@@ -184,9 +186,7 @@ Errors CheckEquation(char *equationToCheck) {
 
     equation++;
     int cntEquals = 0;
-    // can't work with 1e5.2x (undefined behaviour). Check valid symbols
 
-    printf("HERE1\n");
     while (*equation != '\0') {
         if                        (                       !ValidSymbol(*equation)                    ||
                                    (*equation == 'e'   && !ValidE(ValidArg))                         ||
@@ -195,15 +195,13 @@ Errors CheckEquation(char *equationToCheck) {
                                    (*equation == '^'   && !ValidPow(ValidArg))                       ||
                                    (isalpha(*equation) && !ValidAlpha(ValidArg) && *equation != 'e') ||
                                    (isdigit(*equation) && !ValidDigit(ValidArg))                     ||
-                                   (IsSign(*equation)  && !ValidSign(ValidArg))) {
-            printf("HERE1: %c %c\n", *equation, *(equation + 1));          
+                                   (IsSign(*equation)  && !ValidSign(ValidArg))) {        
             return Errors::INVALID_EQUATION_FORMAT;
         }
         
         if (*equation == '=') cntEquals++;
         equation++;
     }
-    printf("HERE2\n");
 
     if (cntEquals > 1) {
         return Errors::INVALID_EQUATION_FORMAT;
@@ -212,7 +210,7 @@ Errors CheckEquation(char *equationToCheck) {
     //Check valid pows and coeffs:
     equation = equationToCheck;
     while (*equation != '\0') {
-            strtod(equation, &equation); //почему оно не const **equation требует
+            strtod(equation, &equation);
             
             if (*equation == '\0') break;
 
@@ -240,6 +238,8 @@ Errors CheckEquation(char *equationToCheck) {
 
     return Errors::NO_ERRORS;
 }
+
+#undef ValidArg
 
 // =
 
@@ -273,16 +273,16 @@ static int ValidStart(char now) {
 
 static int ValidE(char previous, char next) {
     return (isdigit(previous) || previous == '.') &&
-           isdigit(next);
+            isdigit(next);
 }
 static int ValidAlpha(char previous, char next) {
     return (strchr("+-=.", previous) || isdigit(previous)) &&
-           (strchr("+-=^\0", next));
+           (strchr("+-=^", next));
 }
 
 static int ValidDigit(char previous, char next) {
     return (strchr("+-^=e.", previous) || isdigit(previous)) &&
-           (strchr("+-.e=\0", next) || isdigit(next) || isalpha(next));
+           (strchr("+-.e=",  next)     || isdigit(next) || isalpha(next));
 }
 
 static int ValidPow(char previous, char next) {
@@ -293,12 +293,12 @@ static int ValidPow(char previous, char next) {
 static int ValidDot(char previous, char next) {
     return (strchr("+-=", previous) || isdigit(previous)) &&
            (isdigit(next) || isalpha(next) || IsSign(next) || next == '\0' || next == '=') &&
-           !(!isdigit(previous) && !isdigit(next));
+           (isdigit(previous) || isdigit(next));
 }
 
 static int ValidSign(char previous, char next) {
-    return (isalpha(previous) || isdigit(previous) || previous == '=' || previous == '.') &&
-           (isalpha(next) || isdigit(next) || next == '.');
+    return (isalpha(previous) || isdigit(previous) || previous == '.' || previous == '=') &&
+           (isalpha(next)     || isdigit(next)     || next     == '.');
 }
 
 static int ValidEqual(char previous, char next) {
@@ -309,5 +309,3 @@ static int ValidEqual(char previous, char next) {
 static int ValidSymbol(char now) {
     return isdigit(now) || isalpha(now) || strchr("+-.=^", now);
 }
-
-#undef ValidArgs

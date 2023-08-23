@@ -31,7 +31,7 @@ int SkipSymbols(FILE *fp) {
     
     int ch = getc(fp);
     while (ch != '\n' && ch != EOF) {
-        if (!isblank(ch)) cnt++;
+        if (!isspace(ch)) cnt++;
         ch = getc(fp);
     }
 
@@ -49,7 +49,8 @@ int IsSign(const char c) {
 char ChangeSign(const char c) {
     if (c == '-') {
         return '+';
-    } else if (c == '+') {
+    }
+    if (c == '+') {
         return '-';
     }
 

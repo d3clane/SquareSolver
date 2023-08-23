@@ -287,10 +287,11 @@ Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
 
     static char equation[MAX_EQUATION_SIZE];
 
-    if (fgets(equation, MAX_EQUATION_SIZE, fp) == NULL) {
+    if (fgets(equation, MAX_EQUATION_SIZE, fp) == NULL) 
         return Errors::READING_EQUATION_FROM_FILE_ERROR;
-    }
-
+    
+    if (SkipSymbols(fp) != 0) 
+        return Errors::EXTRA_SYMBOLS_IN_LINE;
     
     return ParseQuadraticEquation(equation, a, b, c);
 }
@@ -339,7 +340,7 @@ static inline Errors MenuInputCoeffs() {
 
 static inline Errors MenuInputEquation() {
     printf("Print equation format: x^2 + 4x - 2x + 3 = 23 - 17x^2: (or <Enter> to quit) \n");
-    printf("Equation size have to be less than %d", MAX_EQUATION_SIZE);
+    printf("Equation size have to be less than %d\n", MAX_EQUATION_SIZE);
 
     int ch = getc(stdin);
     ungetc(ch, stdin);
