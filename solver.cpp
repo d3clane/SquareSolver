@@ -27,6 +27,8 @@ enum NumberOfRoots SolveQuadraticEquation(const double a, const double b, const 
                 numberOfRoots = ONE_ROOT;
                 *x1 = -b / (2 * a);
                 break;
+            
+            case GREATER:
             default:
                 numberOfRoots = TWO_ROOTS;
                 double sqrtD = sqrt(D);
@@ -65,6 +67,8 @@ const char *ConvertEnumToString(const NumberOfRoots numberOfRoots) {
             return "one root";
         case TWO_ROOTS:
             return "two roots";
+
+        case INF_ROOTS:
         default:
             return "infinite number of roots";
     }

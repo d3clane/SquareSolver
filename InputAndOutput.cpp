@@ -12,15 +12,15 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-CommandLineFlags commandLineFlags = {0};
-
 const char *FILE_FlAG                =  "-f";
 
 const char *COMMAND_LINE_FLAG        =  "-c";
 
 const char *STDIN_FLAG               =  "-s";
 
+#ifdef TEST
 const char *TEST_MODE_FLAG           =  "-t";
+#endif
 
 const char *EQUATION_INPUT_MODE_FLAG = "-eq";
 
@@ -32,11 +32,11 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
     assert(c    != NULL);
     assert(argv != NULL);
 
-    commandLineFlags = ReadCommandLineFlags(argc, argv);
+    CommandLineFlags commandLineFlags = ReadCommandLineFlags(argc, argv);
 
     FILE *fp = NULL;
     static const size_t FILE_NAME_LENGTH = 64;
-    static char fileName[FILE_NAME_LENGTH];
+    static char fileName[FILE_NAME_LENGTH] = "";
     Errors inputError = Errors::NO_ERRORS;
 
     if (commandLineFlags.readFromFile) {
@@ -44,6 +44,7 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
             inputError = ReadFileNameFromCommandLine(argc, argv, fileName, FILE_NAME_LENGTH);
         } else if (commandLineFlags.readFromStdin) {
             inputError = ReadFileNameFromStdin(fileName, FILE_NAME_LENGTH);
+            printf("HERE7 %d\n", (int) inputError);
         } else {
             return Errors::UNKNOWN_COMMAND_LINE_FLAG;
         }
@@ -58,7 +59,7 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
         else inputError = ReadCoeffsFromFile(a, b, c, fp);
 
         fclose(fp);
-
+        
         return inputError;
     }
 
@@ -86,18 +87,24 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
 CommandLineFlags ReadCommandLineFlags(const int argc, const char *argv[]) {
     assert(argv != NULL);
 
+    CommandLineFlags commandLineFlags = {0};
+
     for (int i = 0; i < argc; ++i) {
-        if (strcmp(argv[i], FILE_FlAG) == 0) {
+        if (strcmp(argv[i], FILE_FlAG) == 0)
             commandLineFlags.readFromFile = 1;
-        } else if (strcmp(argv[i], COMMAND_LINE_FLAG) == 0) {
+        else if (strcmp(argv[i], COMMAND_LINE_FLAG) == 0)
             commandLineFlags.readFromCommandLine = 1;
-        } else if (strcmp(argv[i], STDIN_FLAG) == 0) {
+        else if (strcmp(argv[i], STDIN_FLAG) == 0)
             commandLineFlags.readFromStdin = 1;
-        } else if (strcmp(argv[i], TEST_MODE_FLAG) == 0) {
-            commandLineFlags.testMode = 1;
-        } else if (strcmp(argv[i], EQUATION_INPUT_MODE_FLAG) == 0) {
+
+        else if (strcmp(argv[i], EQUATION_INPUT_MODE_FLAG) == 0)
             commandLineFlags.equationInputMode = 1;
-        }
+
+#ifdef TEST
+        if (strcmp(argv[i], TEST_MODE_FLAG) == 0)
+            commandLineFlags.testMode = 1;
+#endif
+
     }
 
     if (!commandLineFlags.readFromCommandLine) {
@@ -144,8 +151,11 @@ Errors ReadEquationCoeffsFromCommandLine(const int argc, const char *argv[], dou
 
     for (int i = 0; i < argc - 1; ++i) { // till (argc - 3) cause also reading (i + 3)
         if (strcmp(argv[i], EQUATION_INPUT_MODE_FLAG) == 0) {
-            readError = ParseQuadraticEquation(argv[i + 1], a, b, c);
+            if (strlen(argv[i + 1]) + 1 >= MAX_EQUATION_SIZE)
+                return Errors::EXTRA_SYMBOLS_IN_LINE;
 
+            readError = ParseQuadraticEquation(argv[i + 1], a, b, c);
+            
             break;
         }
     }
@@ -165,6 +175,10 @@ Errors ReadFileNameFromCommandLine(const int argc, const char *argv[], char *nam
         if (strcmp(argv[i], FILE_FlAG) == 0) {
             readError = Errors::NO_ERRORS;
             strncpy(name, argv[i + 1], size - 1);
+
+            if (strlen(argv[i + 1]) > size - 1) 
+                return Errors::EXTRA_SYMBOLS_IN_LINE;
+            
             name[size - 1] = '\0';
             break;
         }
@@ -182,29 +196,23 @@ Errors ReadCoeffsFromStdin(double *a, double *b, double *c) {
 
     static const int NUMBER_OF_READ_VALUES = 3;
 
-    Errors quitInput = MenuInputCoeffs(); //quitInput - flag to quit the scan program without getting correct input
+    Errors quitInput = Errors::NO_ERRORS;
+
     int scannedVals = 0;
-    char ch = 0;
-
     while (true) {
-
-        scannedVals = fscanf(stdin, "%lf %lf %lf%c", a, b, c, &ch);
-
-        if ((scannedVals == NUMBER_OF_READ_VALUES + 1 && ch == '\n') ||
-            quitInput != Errors::NO_ERRORS || scannedVals == EOF)
-        {
-            break;
-        }
-
-        printf("not valid input\n");
-        SkipSymbols(stdin);
-
         quitInput = MenuInputCoeffs();
-        if (quitInput != Errors::NO_ERRORS) {
-            printf("Quit the program\n");
-            break;
-        }
+        scannedVals = fscanf(stdin, "%lf %lf %lf", a, b, c);
+        
+        if (SkipSymbols(stdin) == 0) {
+            if (scannedVals == NUMBER_OF_READ_VALUES || 
+                quitInput != Errors::NO_ERRORS       || scannedVals == EOF) {
+                break;
+                }
+        } 
+
+        printf("Not valid input\n");
     }
+
 
     if (scannedVals == EOF) {
         return Errors::READING_COEFFS_FROM_STDIN_ERROR;
@@ -222,25 +230,23 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c) {
 
     static char equation[MAX_EQUATION_SIZE] = {0};
 
-    Errors quitInput = MenuInputEquation();
-    if (fgets(equation, MAX_EQUATION_SIZE, stdin) == NULL) {
-        return Errors::READING_EQUATION_FROM_STDIN_ERROR;
-    }
-
-    while (quitInput == Errors::NO_ERRORS && ParseQuadraticEquation(equation, a, b, c) != Errors::NO_ERRORS) {
-        printf("not valid input\n");
-        //SkipSymbols();
-
+    Errors quitInput = Errors::NO_ERRORS;
+    while (true) {
         quitInput = MenuInputEquation();
-        if (quitInput != Errors::NO_ERRORS) {
-            printf("Quit the program\n");
-            break;
+
+        if (fgets(equation, MAX_EQUATION_SIZE, stdin) == NULL) 
+            return Errors::READING_EQUATION_FROM_STDIN_ERROR;
+
+        //printf("%s\n", equation);
+        if (HasReadAllStringWithFgets(equation, MAX_EQUATION_SIZE, stdin)) {
+            if (quitInput == Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT ||  ParseQuadraticEquation(equation, a, b, c) == Errors::NO_ERRORS) {
+                break;
+            }
+        } else {
+            printf("Equation is too long\n");
         }
 
-        char *tmp = fgets(equation, MAX_EQUATION_SIZE, stdin);
-        if (tmp == NULL) {
-            return Errors::READING_EQUATION_FROM_STDIN_ERROR;
-        }
+        printf("Not valid input\n");
     }
 
     return quitInput != Errors::NO_ERRORS ? quitInput : CheckCoeffsIsFinite(*a, *b, *c);
@@ -253,9 +259,17 @@ Errors ReadFileNameFromStdin(char *name, const size_t size) {
 
     printf("Print file name with the length less than %zu (or EOF to quit): \n", size);
 
-    Errors readError = Fgets_s(name, size);
+    Errors readError = Fgets_s(name, size, stdin);
 
-    return readError == Errors::NO_ERRORS ? readError : Errors::READING_FILE_NAME_FROM_STDIN_ERROR;
+    if (readError == Errors::READING_FROM_STDIN_ERROR)
+        readError = Errors::READING_FILE_NAME_FROM_STDIN_ERROR;
+
+    if (!HasReadAllStringWithFgets(name, size, stdin)) {
+        return Errors::EXTRA_SYMBOLS_IN_LINE;
+    }
+
+
+    return readError;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -264,7 +278,6 @@ Errors ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
     assert(a  != NULL);
     assert(b  != NULL);
     assert(c  != NULL);
-    assert(fp != NULL);
 
     static const int NUMBER_OF_READ_VALUES = 3;
 
@@ -273,7 +286,10 @@ Errors ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
     if (fscanf(fp, "%lf %lf %lf", a, b, c) != NUMBER_OF_READ_VALUES) {
         error = Errors::READING_COEFFS_FROM_FILE_ERROR;
     }
-
+    int cnt = 0;
+    if ((cnt = SkipSymbols(fp)) != 0)
+        return Errors::EXTRA_SYMBOLS_IN_LINE;
+    
     return error != Errors::NO_ERRORS ? error : CheckCoeffsIsFinite(*a, *b, *c);
 }
 
@@ -285,14 +301,15 @@ Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
     assert(c  != NULL);
     assert(fp != NULL);
 
-    static char equation[MAX_EQUATION_SIZE];
+    static char equation[MAX_EQUATION_SIZE] = "";
 
-    if (fgets(equation, MAX_EQUATION_SIZE, fp) == NULL) 
-        return Errors::READING_EQUATION_FROM_FILE_ERROR;
+    Errors error = Fgets_s(equation, MAX_EQUATION_SIZE, fp);
+    if (error == Errors::READING_FROM_STDIN_ERROR)
+        error = Errors::READING_EQUATION_FROM_FILE_ERROR;
     
-    if (SkipSymbols(fp) != 0) 
+    if (!HasReadAllStringWithFgets(equation, MAX_EQUATION_SIZE, fp)) 
         return Errors::EXTRA_SYMBOLS_IN_LINE;
-    
+
     return ParseQuadraticEquation(equation, a, b, c);
 }
 
@@ -340,7 +357,7 @@ static inline Errors MenuInputCoeffs() {
 
 static inline Errors MenuInputEquation() {
     printf("Print equation format: x^2 + 4x - 2x + 3 = 23 - 17x^2: (or <Enter> to quit) \n");
-    printf("Equation size have to be less than %d\n", MAX_EQUATION_SIZE);
+    printf("Equation size have to be less than %lu\n", MAX_EQUATION_SIZE);
 
     int ch = getc(stdin);
     ungetc(ch, stdin);
@@ -363,10 +380,10 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp) 
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors Fgets_s(char *name, const size_t size) {
+Errors Fgets_s(char *name, const size_t size, FILE *fp) {
     assert(name != NULL);
 
-    if (fgets(name, (int) size, stdin) == NULL) {
+    if (fgets(name, (int) size, fp) == NULL) {
         return Errors::READING_FROM_STDIN_ERROR;
     }
 
@@ -374,8 +391,20 @@ Errors Fgets_s(char *name, const size_t size) {
     if (ptr != NULL) {
         *ptr = '\0';
     }
-
+    printf("Here5\n");
     return Errors::NO_ERRORS;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+bool HasReadAllStringWithFgets(const char *str, const size_t size, FILE *fp) {
+    if (strlen(str) + 1 < size || str[size - 2] == '\0') {
+        printf("here2\n");
+        return 1;
+    }  
+    
+    printf("Here1\n");
+    return SkipSymbols(fp) == 0 ? 1 : 0;
 }
 
 //---------------------------------------------------------------------------------------------------------------------

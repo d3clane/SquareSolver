@@ -19,9 +19,8 @@
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#define TEST
-extern const char *FILE_NAME;
-extern const char *FILE_MODE;
+static const char *const FILE_NAME = "test.txt";
+static const char *const FILE_MODE = "r";
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -44,5 +43,18 @@ extern const char *FILE_MODE;
  Errors Testing();
 
 //---------------------------------------------------------------------------------------------------------------------
+
+/// \brief tests only one equation
+/// \param [in] a 
+/// \param [in] b 
+/// \param [in] c 
+/// \param [in] testX1 
+/// \param [in] testX2 
+/// \param [in] numberOfRoots 
+/// \param [in] testNumber 
+/// \return errors it they occur
+Errors TestOneEquation(double a, double b, double c, 
+                       double testX1, double testX2,
+                       int numberOfRoots, int testNumber);
 
 #endif //TESTING_MODE_H

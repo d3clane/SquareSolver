@@ -8,6 +8,8 @@
 
 static void TransposeOneSymbol(char **tmpPos, char **posPtr, bool haveToChangeSign);
 
+//---------------------------------------------------------------------------------------------------------------------
+
 static int ValidAlpha(char previous, char next);
 
 static int ValidDigit(char previous, char next);
@@ -25,6 +27,14 @@ static int ValidE(char previous, char next);
 static int ValidSymbol(char now);
 
 static int ValidStart(char now);
+
+static int ValidCoeff(char **posInEquation);
+
+static int ValidPowCoeff(char **posInEquation);
+
+static Errors CheckStringOnValidSymbols(char **posInEquation);
+
+static Errors CheckStringPowsAndCoeffs(char **posInEquation);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -49,15 +59,15 @@ Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double
         return errors;
     }
 
-    char *posPtr = copyEquation;
+    char *posInCopyEquation = copyEquation;
 
     *a = *b = *c = 0;
 
-    while (*posPtr != '\0') {
+    while (*posInCopyEquation != '\0') {
         double tmpVal = NAN;
         char *tmpPos = NULL;
 
-        PowerOfX powerOfX = GetXPowAndCoeff(posPtr, &tmpVal, &tmpPos);
+        PowerOfX powerOfX = GetXPowAndCoeff(posInCopyEquation, &tmpVal, &tmpPos);
 
         switch (powerOfX) {
             case POWER_ZERO:
@@ -75,12 +85,11 @@ Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double
                 return Errors::INVALID_POWER_OF_X;;
         }
 
-        posPtr = tmpPos;
+        posInCopyEquation = tmpPos;
 
-        if (!IsSign(*posPtr) && *posPtr != '\0') {
-            posPtr++;
+        if (!IsSign(*posInCopyEquation) && *posInCopyEquation != '\0') {
+            posInCopyEquation++;
         }
-
     }
 
     if (errors != Errors::NO_ERRORS)
@@ -120,11 +129,11 @@ PowerOfX GetXPowAndCoeff(const char *x, double *target, char **endPtr) {
 //---------------------------------------------------------------------------------------------------------------------
 
 //spaces have to be deleted
-Errors TransposeEquation(char *copyEquation) {
-    assert(copyEquation != NULL);
+Errors TransposeEquation(char *equation) {
+    assert(equation != NULL);
 
-    char *equalPointer = strchr(copyEquation, '=');
-    char *endPointer = strchr(copyEquation, '\0');
+    char *equalPointer = strchr(equation, '=');
+    char *endPointer = strchr(equation, '\0');
 
     if (endPointer == NULL) {
         return Errors::INVALID_STRING_NO_ENDING;
@@ -134,135 +143,125 @@ Errors TransposeEquation(char *copyEquation) {
         equalPointer = endPointer;
     }
 
-    static char tmpEquation[2 * MAX_EQUATION_SIZE] = "";
+    static char transposedEquation[2 * MAX_EQUATION_SIZE] = "";
 
-    char *tmpPos = tmpEquation;
-    char *posPtr = copyEquation;
+    char *posInTransposed = transposedEquation;
+    char *posInGivenEquation = equation;
     
-    if (!IsSign(*posPtr)) {
-        *tmpPos = '+';
-        tmpPos++;
+    if (!IsSign(*posInGivenEquation)) {
+        *posInTransposed = '+';
+        posInTransposed++;
     }
-    while (posPtr < equalPointer) {
-        TransposeOneSymbol(&tmpPos, &posPtr, 0);
-    }
+    while (posInGivenEquation < endPointer) {
+        if      (posInGivenEquation < equalPointer)                                 //норм делать фигурные скобки только у одного элса
+            TransposeOneSymbol(&posInTransposed, &posInGivenEquation, false);
+        else if (posInGivenEquation > equalPointer) 
+            TransposeOneSymbol(&posInTransposed, &posInGivenEquation, true);
+        else {
+            posInGivenEquation++;
 
-    if (posPtr >= endPointer) {
-        strcpy(copyEquation, tmpEquation);
-        return Errors::NO_ERRORS;
-    }
-
-    posPtr++;
-
-    if (!IsSign(*posPtr)) {
-        *tmpPos = '-';
-        tmpPos++;
-    }
-    while (posPtr < endPointer) {
-        TransposeOneSymbol(&tmpPos, &posPtr, 1);
+            if (!IsSign(*posInGivenEquation)) {
+                *posInTransposed = '-';
+                posInTransposed++;
+            }
+        }
     }
 
-    *tmpPos = '\0';
+    *posInTransposed = '\0';
 
-    strcpy(copyEquation, tmpEquation);
+    strcpy(equation, transposedEquation);
 
     return Errors::NO_ERRORS;
 }
 
 
 //---------------------------------------------------------------------------------------------------------------------
-
-#define ValidArg *(equation - 1), *(equation + 1)
 
 // spaces have to be deleted
 Errors CheckEquation(char *equationToCheck) {
     assert(equationToCheck != NULL);
 
-    char *equation = equationToCheck;
+    char *posInEquation = equationToCheck;
 
-    if (!ValidStart(*equation)) {
+    if (!ValidStart(*posInEquation)) {
         return Errors::INVALID_EQUATION_FORMAT;
     }
 
-    equation++;
+    posInEquation++;
+
+    Errors errors = Errors::NO_ERRORS;
+
+    errors = CheckStringOnValidSymbols(&posInEquation);
+    
+    if (errors != Errors::NO_ERRORS)
+
+    //Check valid pows and coeffs:
+    posInEquation = equationToCheck;
+    errors = CheckStringPowsAndCoeffs(&posInEquation);
+
+    return errors;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+static void TransposeOneSymbol(char **posInTransposed, char **posInGiven, bool haveToChangeSign) {
+    if (isalpha(**posInGiven) && !isdigit(*(*posInGiven - 1)) && *(*posInGiven - 1) != '.') {
+        **posInTransposed = '1';
+        ++(*posInTransposed);
+    }
+
+    if (haveToChangeSign) 
+         **posInTransposed = ChangeSign(**posInGiven);
+    else **posInTransposed = **posInGiven;
+
+    ++(*posInTransposed);
+    ++(*posInGiven);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#define ValidArg *(*posInEquation - 1), *(*posInEquation + 1)
+
+static Errors CheckStringOnValidSymbols(char **posInEquation) {
     int cntEquals = 0;
 
-    while (*equation != '\0') {
-        if                        (                       !ValidSymbol(*equation)                    ||
-                                   (*equation == 'e'   && !ValidE(ValidArg))                         ||
-                                   (*equation == '.'   && !ValidDot(ValidArg))                       ||
-                                   (*equation == '='   && !ValidEqual(ValidArg))                     ||
-                                   (*equation == '^'   && !ValidPow(ValidArg))                       ||
-                                   (isalpha(*equation) && !ValidAlpha(ValidArg) && *equation != 'e') ||
-                                   (isdigit(*equation) && !ValidDigit(ValidArg))                     ||
-                                   (IsSign(*equation)  && !ValidSign(ValidArg))) {        
+    while (**posInEquation != '\0') {
+        if (                            !ValidSymbol(**posInEquation)                     ||
+            (**posInEquation == 'e'   && !ValidE(ValidArg))                               ||
+            (**posInEquation == '.'   && !ValidDot(ValidArg))                             ||
+            (**posInEquation == '='   && !ValidEqual(ValidArg))                           ||
+            (**posInEquation == '^'   && !ValidPow(ValidArg))                             ||
+            (isalpha(**posInEquation) &&  **posInEquation != 'e' && !ValidAlpha(ValidArg)) ||
+            (isdigit(**posInEquation) && !ValidDigit(ValidArg))                           ||
+            (IsSign(**posInEquation)  && !ValidSign(ValidArg))) {        
             return Errors::INVALID_EQUATION_FORMAT;
         }
         
-        if (*equation == '=') cntEquals++;
-        equation++;
+        if (**posInEquation == '=') cntEquals++;
+        (*posInEquation)++;
     }
 
-    if (cntEquals > 1) {
-        return Errors::INVALID_EQUATION_FORMAT;
-    }
-
-    //Check valid pows and coeffs:
-    equation = equationToCheck;
-    while (*equation != '\0') {
-            strtod(equation, &equation);
-            
-            if (*equation == '\0') break;
-
-            //printf("%c %d\n", *equation, IsSign(*equation) || isalpha(*equation) || *equation == '=' );
-            if (*equation == 'e' || !(IsSign(*equation) || isalpha(*equation) || *equation == '=')) { //case 2.2.2 or 1e5.2
-                printf("HERE3: %c\n", *equation);
-                return Errors::INVALID_EQUATION_FORMAT;
-            }
-
-            equation++;
-
-            if (*equation == '\0') break;
-
-            if (*equation == '^') {
-                equation++;
-                strtol(equation, &equation, 10);
-                if (!(IsSign(*equation) || *equation == '=' || *equation == '\0')) { // x^2+ x^2= no other cases
-                    printf("HERE4: %c\n", *equation);
-                    return Errors::INVALID_EQUATION_FORMAT;
-                }
-            }
-
-            printf("%s\n", equation);
-    }  
-
-    return Errors::NO_ERRORS;
+    return cntEquals > 1 ? Errors::INVALID_EQUATION_FORMAT : Errors::NO_ERRORS;
 }
 
 #undef ValidArg
 
-// =
-
 //---------------------------------------------------------------------------------------------------------------------
 
-static void TransposeOneSymbol(char **tmpPos, char **posPtr, bool haveToChangeSign) {
-    if (IsSign(**posPtr) || isdigit(**posPtr)) { //example: +2x
+static Errors CheckStringPowsAndCoeffs(char **posInEquation) {
+    while (**posInEquation != '\0') {
+        if (!ValidCoeff(posInEquation)) {
+            return Errors::INVALID_EQUATION_FORMAT;
+        }
+    
+        posInEquation++; //go to the next 
 
-        if (haveToChangeSign) **tmpPos = ChangeSign(**posPtr);
-        else **tmpPos = **posPtr;
+        if (!ValidPowCoeff(posInEquation)) {
+            return Errors::INVALID_EQUATION_FORMAT;
+        }   
+    }  
 
-    } else if (isalpha(**posPtr) && isdigit(*(*posPtr - 1))) { //example: 2x
-        **tmpPos = **posPtr;
-    } else if (isalpha(**posPtr) && !isdigit(*(*posPtr - 1)) && *(*posPtr - 1) != '.') { //example: +x, x
-        **tmpPos = '1';
-        ++(*tmpPos);
-        **tmpPos = **posPtr;
-    } else {
-        **tmpPos = **posPtr;
-    }
-
-    ++(*tmpPos);
-    ++(*posPtr);
+    return Errors::NO_ERRORS;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -292,8 +291,8 @@ static int ValidPow(char previous, char next) {
 
 static int ValidDot(char previous, char next) {
     return (strchr("+-=", previous) || isdigit(previous)) &&
-           (isdigit(next) || isalpha(next) || IsSign(next) || next == '\0' || next == '=') &&
-           (isdigit(previous) || isdigit(next));
+           (isalpha(next)           || isdigit(next) || IsSign(next) || next == '\0' || next == '=') &&
+           (isdigit(previous)       || isdigit(next));
 }
 
 static int ValidSign(char previous, char next) {
@@ -303,9 +302,37 @@ static int ValidSign(char previous, char next) {
 
 static int ValidEqual(char previous, char next) {
     return (isdigit(previous) || isalpha(previous) || previous == '.') &&
-           (strchr("+-.", next) || isdigit(next) || isalpha(next));
+           (isdigit(next)     || isalpha(next)     || next     == '.' || IsSign(next));
 }
 
 static int ValidSymbol(char now) {
     return isdigit(now) || isalpha(now) || strchr("+-.=^", now);
+}
+
+//chagnes posInEquation position on the last symbol not read
+static int ValidCoeff(char **posInEquation) {
+    strtod(*posInEquation, posInEquation);
+
+    if (**posInEquation != '\0') {
+        if (**posInEquation == 'e' || !(IsSign(**posInEquation) || isalpha(**posInEquation) || **posInEquation == '=')) { 
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+//change posInEquation position on the last symbol not read
+static int ValidPowCoeff(char **posInEquation) {
+    if (**posInEquation != '\0') {
+        if (**posInEquation == '^') {
+            (*posInEquation)++;
+            strtol(*posInEquation, posInEquation, 10);
+            
+            if (!(IsSign(**posInEquation) || **posInEquation == '=' || **posInEquation == '\0')) // x^2+ x^2= no other cases
+                    return 1;
+        }
+    }
+
+    return 0;
 }

@@ -8,9 +8,8 @@
 int main(int argc, const char *argv[]) {
     //setbuf(stdout, NULL);
 
-    CommandLineFlags commandLineFlags = ReadCommandLineFlags(argc, argv);
-
 #ifdef TEST
+    CommandLineFlags commandLineFlags = ReadCommandLineFlags(argc, argv);
     if (commandLineFlags.testMode) {
         Testing();
         return 0;

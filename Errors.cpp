@@ -13,9 +13,6 @@ int PrintErrors(const Errors errors) {
         case Errors::FILE_OPENING_ERROR:
             perror("Error opening the file");
             break;
-        case Errors::CONVERTING_STRING_TO_DOUBLE_ERROR:
-            perror("Error converting string to double");
-            break;
         case Errors::INVALID_NUMBER_OF_ROOTS:
             perror("Invalid number of roots given");
             break;
@@ -69,7 +66,6 @@ int PrintErrors(const Errors errors) {
             break;
         case Errors::EXTRA_SYMBOLS_IN_LINE:
             perror("Extra symbols printed by user");
-            return 0;
             break;
         default:
             perror("No such error");

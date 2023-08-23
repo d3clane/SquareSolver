@@ -31,10 +31,6 @@ typedef struct {
 } CommandLineFlags;
 
 //---------------------------------------------------------------------------------------------------------------------
-
-extern CommandLineFlags commandLineFlags; ///< constant contains command line flags. \warning don't change
-
-//---------------------------------------------------------------------------------------------------------------------
 /// \brief command line flags
 
 ///< -f getting input from file (if "-c" flag is added, file name have to be in command line,
@@ -178,8 +174,15 @@ Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
 /// \param [out] name
 /// \param [in] size
 /// \return 0 if reading is successful otherwise not 0
-Errors Fgets_s(char *name, const size_t size);
+Errors Fgets_s(char *name, const size_t size, FILE *fp);
 
 //---------------------------------------------------------------------------------------------------------------------
+
+/// \brief 
+/// \param [in] str string with read input from stdin
+/// \param [in] size - size of str buffer 
+/// \param [in] file from which str was read
+/// \return true (1) if fgets has read all string. false (0) if something is in the string (except '\n');
+bool HasReadAllStringWithFgets(const char *str, const size_t size, FILE *fp);
 
 #endif // INPUT_AND_OUTPUT_H

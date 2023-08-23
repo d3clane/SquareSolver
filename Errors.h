@@ -16,32 +16,31 @@
 
 /// \brief Errors than may occur during the program working
 enum class Errors {
-    NO_ERRORS = 0,                             ///< no errors occurred
-    QUIT_THE_PROGRAM_WITHOUT_INPUT,            ///< user decided to quit the program
+    NO_ERRORS                                 =  0,
+    QUIT_THE_PROGRAM_WITHOUT_INPUT            =  1, ///< user decided to quit the program
 
-    FILE_OPENING_ERROR,                        ///< error occurred while opening file
+    FILE_OPENING_ERROR                        =  2,
 
-    UNKNOWN_COMMAND_LINE_FLAG,                 ///< error occurred because of unknown command line flag given
+    UNKNOWN_COMMAND_LINE_FLAG                 =  3, ///< user used unknown flag
 
-    READING_FROM_STDIN_ERROR,                  ///< error occurred while reading from stdin
-    READING_COEFFS_FROM_STDIN_ERROR,           ///< error occurred while reading coefficients from stdin
-    READING_FILE_NAME_FROM_STDIN_ERROR,        ///< error occurred while reading file name from stdin
-    READING_EQUATION_FROM_STDIN_ERROR,         ///< error occurred while reading equation from stdin
-    READING_COEFFS_FROM_FILE_ERROR,            ///< error occurred while reading coefficients from file
-    READING_EQUATION_FROM_FILE_ERROR,          ///< error occurred while reading equation from file
-    READING_EQUATION_FROM_COMMAND_LINE_ERROR,  ///< error occurred while reading equation from command line
-    READING_COEFFS_FROM_COMMAND_LINE_ERROR,    ///< error occurred while reading coefficients from command line
-    READING_FILE_NAME_FROM_COMMAND_LINE_ERROR, ///< error occurred while reading file name from command line
+    READING_FROM_STDIN_ERROR                  =  4,
+    READING_COEFFS_FROM_STDIN_ERROR           =  5,
+    READING_FILE_NAME_FROM_STDIN_ERROR        =  6,
+    READING_EQUATION_FROM_STDIN_ERROR         =  7,
+    READING_COEFFS_FROM_FILE_ERROR            =  8,
+    READING_EQUATION_FROM_FILE_ERROR          =  9,
+    READING_EQUATION_FROM_COMMAND_LINE_ERROR  = 10,
+    READING_COEFFS_FROM_COMMAND_LINE_ERROR    = 11,
+    READING_FILE_NAME_FROM_COMMAND_LINE_ERROR = 12,
 
-    INVALID_EQUATION_FORMAT,                   ///< error occurred because of incorrect equation format
-    INVALID_POWER_OF_X,                        ///< error occurred because of incorrect power of x in the equation
-    INVALID_NUMBER_OF_ROOTS,                   ///< error occurred because of incorrect number of roots given
+    INVALID_EQUATION_FORMAT                   = 13,
+    INVALID_POWER_OF_X                        = 14, ///< power of x is out of the permitted range
+    INVALID_NUMBER_OF_ROOTS                   = 15, ///< number of roots is out of the permitted range
 
-    CONVERTING_STRING_TO_DOUBLE_ERROR,         ///< error occurred while converting string to double
-    INVALID_STRING_NO_ENDING,                  ///< error occurs when given string has no ending
-    EXTRA_SYMBOLS_IN_LINE,                     ///< user printed extra symbols
+    INVALID_STRING_NO_ENDING                  = 17,
+    EXTRA_SYMBOLS_IN_LINE                     = 18, ///< user printed extra symbols
 
-    DOUBLE_IS_OUT_OF_RANGE,                    ///< error occurs when double is out of range
+    DOUBLE_IS_OUT_OF_RANGE                     = 19,
 };
 
 //---------------------------------------------------------------------------------------------------------------------
