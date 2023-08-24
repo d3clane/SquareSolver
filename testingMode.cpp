@@ -6,16 +6,13 @@
 
 static inline void Swap(double *a, double *b);
 
-#define TESTFAILED "Test %d failed:\nprogram result: "
-#define TESTOK "Test %d: test is OK\n"
 //---------------------------------------------------------------------------------------------------------------------
 
 Errors Testing() {
     FILE *fp = fopen(FILE_NAME, FILE_MODE);
 
-    if (fp == NULL) {
+    if (!fp)
         return Errors::FILE_OPENING_ERROR;
-    }
 
     static const int HAVE_TO_READ_VALUES_AT_ONCE = 6;
 
@@ -42,6 +39,9 @@ Errors Testing() {
 
 //---------------------------------------------------------------------------------------------------------------------
 
+#define TESTFAILED "Test %d failed:\nprogram result: "
+#define TESTOK "Test %d: test is OK\n"
+
 Errors TestOneEquation(double a, double b, double c, 
                        double testX1, double testX2,
                        int numberOfRoots, int testNumber) {
@@ -61,6 +61,7 @@ Errors TestOneEquation(double a, double b, double c,
             case ZERO_ROOTS:
                 printf(TESTOK, testNumber);
                 break;
+                
             case ONE_ROOT:
                 if (Compare(testX1, myX1) == EQUAL) {
                     printf(TESTOK, testNumber);
@@ -70,6 +71,7 @@ Errors TestOneEquation(double a, double b, double c,
                 }
 
                 break;
+
             case TWO_ROOTS:
                 if (Compare(testX1, testX2) == GREATER) Swap(&testX1, &testX2); // testX1 <= testX2
 
@@ -84,6 +86,7 @@ Errors TestOneEquation(double a, double b, double c,
             case INF_ROOTS:
                 printf(TESTOK, testNumber);
                 break;
+
             default:
                 return Errors::INVALID_NUMBER_OF_ROOTS;
         }
@@ -92,6 +95,10 @@ Errors TestOneEquation(double a, double b, double c,
     return Errors::NO_ERRORS;    
 }
 
+#undef TESTOK
+#undef TESTFAILED
+
+
 //---------------------------------------------------------------------------------------------------------------------
 
 static inline void Swap(double *a, double *b) {
@@ -99,6 +106,3 @@ static inline void Swap(double *a, double *b) {
                  *a = *b;
                       *b = tmp;
 }
-
-#undef TESTOK
-#undef TESTFAILED

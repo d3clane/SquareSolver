@@ -33,6 +33,9 @@ enum class Errors {
     READING_COEFFS_FROM_COMMAND_LINE_ERROR    = 11,
     READING_FILE_NAME_FROM_COMMAND_LINE_ERROR = 12,
 
+    HELPING_ERROR                             = 20, ///< no flag to be described by flag 
+    NO_HELPING_FLAG                           = 22, ///< no -h flag but help functions are used
+
     INVALID_EQUATION_FORMAT                   = 13,
     INVALID_POWER_OF_X                        = 14, ///< power of x is out of the permitted range
     INVALID_NUMBER_OF_ROOTS                   = 15, ///< number of roots is out of the permitted range

@@ -16,6 +16,7 @@
 #include "Solver.h"
 #include "StringAndCharFuncs.h"
 #include "StringEquationFuncs.h"
+#include "TestingMode.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -28,6 +29,7 @@ typedef struct {
     unsigned char readFromCommandLine : 1; ///< flag indicates that input should be read from the command line
     unsigned char testMode            : 1; ///< flag indicates that program is started in testing mode
     unsigned char equationInputMode   : 1; ///< flag indicated that program have to read equation not only coefficients
+    unsigned char helpMode            : 1;
 } CommandLineFlags;
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -35,20 +37,20 @@ typedef struct {
 
 ///< -f getting input from file (if "-c" flag is added, file name have to be in command line,
 ///< otherwise program reads the file name from the standard input).
-const extern char *FILE_FlAG;
+const extern char * const FILE_FlAG;
 
 ///< -c getting input from commandline
-const extern char *COMMAND_LINE_FLAG;
+const extern char * const COMMAND_LINE_FLAG;
 
 ///< -s getting input from stdin. this flag is used if "-c" is not specified.
 ///< Could be used with "-f" to read file name from the standard input
-const extern char *STDIN_FLAG;
+const extern char * const STDIN_FLAG;
 
 /// < -t program enters testing mode
-const extern char *TEST_MODE_FLAG;
+const extern char * const TEST_MODE_FLAG;
 
 ///< program reads equation not only coefficients
-const extern char *EQUATION_INPUT_MODE_FLAG;
+const extern char * const EQUATION_INPUT_MODE_FLAG;
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -166,6 +168,10 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c);
 /// \param [in] fp pointer to the FILE
 /// \return 0 if reading is successful otherwise not 0
 Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+Errors Help(const int argc, const char *argv[]);
 
 //---------------------------------------------------------------------------------------------------------------------
 

@@ -67,6 +67,13 @@ int PrintErrors(const Errors errors) {
         case Errors::EXTRA_SYMBOLS_IN_LINE:
             perror("Extra symbols printed by user");
             break;
+        case Errors::HELPING_ERROR:
+            perror("Help can't print info about this flag :\n"
+                   "No such flag");
+            return 0;
+        case Errors::NO_HELPING_FLAG:
+            perror("No helping flag specified. Help functions should not be used");
+            return 0;
         default:
             perror("No such error");
             break;
