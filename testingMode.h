@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "Colors.h"
 #include "DoubleFuncs.h"
 #include "Solver.h"
 
@@ -45,13 +46,13 @@ extern const char *const FILE_MODE;
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief tests only one equation
-/// \param [in] a 
-/// \param [in] b 
-/// \param [in] c 
-/// \param [in] testX1 
-/// \param [in] testX2 
-/// \param [in] numberOfRoots 
-/// \param [in] testNumber 
+/// \param [in] a quadratic coefficeints 
+/// \param [in] b linear coefficients 
+/// \param [in] c free coefficient
+/// \param [in] testX1 reference X1 from tests
+/// \param [in] testX2 reference X2 from tests
+/// \param [in] numberOfRoots reference number of roots from tests
+/// \param [in] testNumber number of test running right now
 /// \return errors it they occur
 Errors TestOneEquation(double a, double b, double c, 
                        double testX1, double testX2,

@@ -4,7 +4,6 @@
 
 #include "TestingMode.h"
 
-#define RED "\x1b[31;1m"
 //---------------------------------------------------------------------------------------------------------------------
 
 const char *const FILE_NAME = "test.txt";
@@ -30,9 +29,10 @@ Errors Testing() {
     int testNumber = 1;
 
     while (true) {
-        int numberOfSuccessfullyReadValues = fscanf(fp, "NUM %d COEFF %lf %lf %lf ROOTS %lf %lf", 
+        int numberOfSuccessfullyReadValues = fscanf(fp, "NUM %d COEFF %lf %lf %lf ROOTS %lf %lf\n", 
                                                     &numberOfRoots, &a, &b, &c, &testX1, &testX2);
-    
+
+        //printf("%d\n", numberOfSuccessfullyReadValues);
         if (numberOfSuccessfullyReadValues != HAVE_TO_READ_VALUES_AT_ONCE) 
             break;
         
@@ -46,7 +46,7 @@ Errors Testing() {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#define TEST_FAILED "Test %d failed:\nprogram result: "
+#define TEST_FAILED REDTEXT "Test %d failed:\nprogram result: "
 #define TEST_OK "Test %d: test is OK\n"
 
 Errors TestOneEquation(double a, double b, double c, 
@@ -65,9 +65,9 @@ Errors TestOneEquation(double a, double b, double c,
                                       (NumberOfRoots) numberOfRoots : INF_ROOTS;
 
     if (testNumberOfRoots != myNumberOfRoots) {
-        printf(RED "Test %d: number of roots do not match\n", testNumber);
+        printf(REDTEXT "Test %d: number of roots do not match\n", testNumber);
 
-        printf("program expected %s, test has %s\n",
+        printf("program expected %s, test has %s\n" STDTEXT,
                 ConvertEnumToString(myNumberOfRoots),
                 ConvertEnumToString(testNumberOfRoots));
     } else {
@@ -80,7 +80,7 @@ Errors TestOneEquation(double a, double b, double c,
                 if (Compare(testX1, myX1) == EQUAL) {
                     printf(TEST_OK, testNumber);
                 } else {
-                    printf(TEST_FAILED "%lf  test value: %lf\n",
+                    printf(TEST_FAILED "%lf  test value: %lf\n" STDTEXT,
                             testNumber, myX1, testX1);
                 }
 
@@ -93,7 +93,7 @@ Errors TestOneEquation(double a, double b, double c,
                 if (Compare(testX1, myX1) == EQUAL && Compare(testX2, myX2) == EQUAL) {
                     printf(TEST_OK, testNumber);
                 } else {
-                    printf(TEST_FAILED "%lf and %lf  test values: %lf and %lf\n",
+                    printf(TEST_FAILED "%lf and %lf  test values: %lf and %lf\n" STDTEXT,
                             testNumber, myX1, myX2, testX1, testX2);
                 }
 

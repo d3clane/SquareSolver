@@ -4,15 +4,12 @@
 
 #include "Errors.h"
 
-
-#define RED "\x1b[31;1m" // в отдельный файл
-
 #ifndef NDEBUG
-    #define PrintError(X) fprintf(stderr, RED X \
+    #define PrintError(X) fprintf(stderr, REDTEXT X \
                           "\nError occured in file %s in line %d\n", \
                           ErrorInfo.fileWithError, ErrorInfo.lineWithError)
 #else
-    #define PrintError(X) fprintf(stderr, RED X);
+    #define PrintError(X) fprintf(stderr, REDTEXT X);
 #endif
 
 ErrorInfo_t ErrorInfo = {.error = Errors::NO_ERRORS, .fileWithError = "aboba", .lineWithError = -1};
@@ -110,6 +107,7 @@ int PrintErrors() {
     return 1;
 }
 
+#undef PrintError
 //---------------------------------------------------------------------------------------------------------------------
 
 Errors CheckCoeffsIsFinite(const double a, const double b, const double c) {
