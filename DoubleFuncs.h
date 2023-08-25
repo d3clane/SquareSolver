@@ -34,4 +34,12 @@ ComparisonResult Compare(const double a, const double b);
 
 //--------------------------------------------------------------------------------------------------------------------
 
+/// \brief Swaps any two types 
+/// \param [out] aVoid pointer to the first storage
+/// \param [out] bVoid pointer to the second storage
+/// \param [in] size sizeof the storage
+void Swap(void *aVoid, void *bVoid, const size_t size);
+
+//--------------------------------------------------------------------------------------------------------------------
+
 #endif //DOUBLE_COMPARISONS_H

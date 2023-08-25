@@ -12,12 +12,29 @@ enum NumberOfRoots SolveQuadraticEquation(const double a, const double b, const 
     assert(x1 != x2);
 
     NumberOfRoots numberOfRoots = ZERO_ROOTS;
-
     if (Compare(a, 0.0) == EQUAL) {
         numberOfRoots = SolveLinearEquation(b, c, x1);
 
     } else {
-        double D = b * b - 4 * a * c;
+
+        if (Compare(c, 0.0) == EQUAL) {
+
+            if (Compare(b, 0.0) == EQUAL) {
+                numberOfRoots = ONE_ROOT;
+                *x1 = 0;
+            } else {
+                numberOfRoots = TWO_ROOTS;
+                *x1 = 0;
+                *x2 = -b / a;
+            }
+
+            if (numberOfRoots == TWO_ROOTS && Compare(*x1, *x2) != LESS)
+                Swap((void *) x1, (void *) x2, sizeof(*x1));
+
+            return numberOfRoots;       
+        }
+
+        double D = b * b - 4 * a * c; //case c = 0 check 
         ComparisonResult compareDiscriminantAndZero = Compare(D, 0.0);
 
         switch (compareDiscriminantAndZero) {
@@ -39,6 +56,10 @@ enum NumberOfRoots SolveQuadraticEquation(const double a, const double b, const 
                 break;
         }
     }
+
+    if (Compare(*x1, *x2) != LESS) 
+        Swap((void *) x1, (void *) x2, sizeof(*x1));
+    
     return numberOfRoots;
 }
 
@@ -63,16 +84,11 @@ NumberOfRoots SolveLinearEquation(const double a, const double b, double *x1) {
 
 const char *ConvertEnumToString(const NumberOfRoots numberOfRoots) {
     switch (numberOfRoots) {
-        case ZERO_ROOTS:
-            return "zero roots";
-        case ONE_ROOT:
-            return "one root";
-        case TWO_ROOTS:
-            return "two roots";
-        case INF_ROOTS:
-            return "infinite number of roots";
-        default:
-            return "invalid number of roots";
+        case ZERO_ROOTS: return "zero roots";
+        case ONE_ROOT:   return "one root";
+        case TWO_ROOTS:  return "two roots";
+        case INF_ROOTS:  return "infinite number of roots";
+        default:         return "invalid number of roots";
     }
 }
 

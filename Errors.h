@@ -4,17 +4,20 @@
 
 /// \file
 /// \brief Contains errors that may occur during the program working.
-/// \details Contains errors enum and function to print these errors.
+/// \details Contains errors info and function to print these errors.
 
 #ifndef ERRORS_H
 #define ERRORS_H
 
+//#define NDEBUG
+
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 
 //---------------------------------------------------------------------------------------------------------------------
 
-/// \brief Errors than may occur during the program working
+/// \brief Errors than may occur during the program working. 
 enum class Errors {
     NO_ERRORS                                 =  0,
     QUIT_THE_PROGRAM_WITHOUT_INPUT            =  1, ///< user decided to quit the program
@@ -43,16 +46,55 @@ enum class Errors {
     INVALID_STRING_NO_ENDING                  = 17,
     EXTRA_SYMBOLS_IN_LINE                     = 18, ///< user printed extra symbols
 
-    DOUBLE_IS_OUT_OF_RANGE                     = 19,
+    DOUBLE_IS_OUT_OF_RANGE                    = 19,
 };
 
 //---------------------------------------------------------------------------------------------------------------------
 
-/// \brief print errors
-///
-/// \param [in] errors error to print
+/// \brief max length file name in my directory
+const int MAX_MY_FILE_NAME = 64;
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief Contains info about errors - File with error, line with error, error code. 
+/// \warning Have to be updated with UpdateError() only
+struct ErrorInfo {
+    Errors error; ///< error code
+    char fileWithError[MAX_MY_FILE_NAME]; ///< __FILE__ (file name with error)
+    int lineWithError; ///< __LINE__ (line with error)
+};
+
+/// \brief global errorInfo constant with error info
+/// \warning this variable have to be changes only with UpdateError()
+extern ErrorInfo errorInfo;
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#ifndef NDEBUG
+
+/// \brief updates special struct with errors errorInfo 
+/// \details copyFileName copy of __FILE__ define at the moment macros is called 
+/// \details copyLineNumber __LINE__ define at the moment macros is valled
+/// \param [in] ERROR Errors enum with error occurred in program
+/// \attention macros is multiline and so in if clause have to be in brackets
+#define UpdateError(ERROR) strcpy(errorInfo.fileWithError, __FILE__); \
+                                  errorInfo.lineWithError = __LINE__; \
+                                  errorInfo.error = ERROR;
+
+#else
+
+/// \brief updates only error code without debug info
+/// \param [in] ERROR
+#define UpdateError(ERROR) errorInfo.error = ERROR
+
+#endif
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief print errors from special struct with errors errorInfo.
+/// \attention errorInfo have to be updated only with UpdateError()
 /// \return 0 if program doesn't have serious errors otherwise 1
-int PrintErrors(const Errors errors);
+int PrintErrors();
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -60,8 +102,9 @@ int PrintErrors(const Errors errors);
 /// \param [in] a   quadratic coefficient
 /// \param [in] b   linear coefficent
 /// \param [in] c   free coefficient
-/// \return
+/// \return error if one of the coeffs is not finite
 Errors CheckCoeffsIsFinite(const double a, const double b, const double c);
 
+//---------------------------------------------------------------------------------------------------------------------
 
 #endif //ERRORS_H

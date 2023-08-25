@@ -15,7 +15,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "DoubleComparisons.h"
+#include "DoubleFuncs.h"
 #include "Errors.h"
 
 //--------------------------------------------------------------------------------------------------------------------

@@ -1,19 +1,19 @@
 #include "InputAndOutput.h"
 #include "Solver.h"
 
-#ifdef TEST
+#ifndef NDEBUG
 #include "TestingMode.h"
 #endif
 
 int main(int argc, const char *argv[]) {
     //setbuf(stdout, NULL);
+
     CommandLineFlags commandLineFlags = ReadCommandLineFlags(argc, argv);
 
-#ifdef TEST
+#ifndef NDEBUG
     if (commandLineFlags.testMode)
         return (int) Testing();
 #endif
-
     if (commandLineFlags.helpMode) 
         return (int) Help(argc, argv);
     
@@ -22,7 +22,7 @@ int main(int argc, const char *argv[]) {
 
     Errors errors = ReadInput(argc, argv, &a, &b, &c);
 
-    if (PrintErrors(errors) != 0)
+    if (PrintErrors() != 0)
         return (int) errors;
 
     enum NumberOfRoots numberOfRoots = SolveQuadraticEquation(a, b, c, &x1, &x2);

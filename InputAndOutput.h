@@ -33,24 +33,77 @@ typedef struct {
 } CommandLineFlags;
 
 //---------------------------------------------------------------------------------------------------------------------
-/// \brief command line flags
 
-///< -f getting input from file (if "-c" flag is added, file name have to be in command line,
-///< otherwise program reads the file name from the standard input).
-const extern char * const FILE_FlAG;
+/// \brief -f (--file) getting input from file (if "-c" flag is added, file name have to be in command line,
+/// \brief otherwise program reads the file name from the standard input).
+const extern char *const FILE_FLAG;
+const extern char *const FILE_FLAG_LONG;
 
-///< -c getting input from commandline
-const extern char * const COMMAND_LINE_FLAG;
+/// \brief -c getting input from commandline
+const extern char *const COMMAND_LINE_FLAG;
+const extern char *const COMMAND_LINE_FLAG_LONG;
 
-///< -s getting input from stdin. this flag is used if "-c" is not specified.
-///< Could be used with "-f" to read file name from the standard input
-const extern char * const STDIN_FLAG;
+/// \brief -s (--stdin) getting input from stdin. this flag is used if "-c" is not specified.
+/// \brief Could be used with "-f" to read file name from the standard input
+const extern char *const STDIN_FLAG;
+const extern char *const STDIN_FLAG_LONG;
 
-/// < -t program enters testing mode
-const extern char * const TEST_MODE_FLAG;
+/// \brief -eq (--equation) program reads equation not only coefficients
+const extern char *const EQUATION_INPUT_FLAG;
+const extern char *const EQUATION_INPUT_FLAG_LONG;
 
-///< program reads equation not only coefficients
-const extern char * const EQUATION_INPUT_MODE_FLAG;
+/// \brief -h (--help) program prints help
+const extern char *const HELP_FLAG;
+const extern char *const HELP_FLAG_LONG;
+
+#ifndef NDEBUG
+/// \brief -t (--test) program enters testing mode
+const extern char *const TEST_MODE_FLAG;
+const extern char *const TEST_MODE_FLAG_LONG;
+#endif
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief compares string with helping flag
+/// \param [in] string to compare
+/// \return 0 if str == flag otherwise not 0;
+int CompareWithHelpFlag(const char *str);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief compares string with read from file flag
+/// \param [in] string to compare
+/// \return 0 if str == flag otherwise not 0;
+int CompareWithFileFlag(const char *str);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief compares string with read from command line flag
+/// \param [in] string to compare
+/// \return 0 if str == flag otherwise not 0;
+int CompareWithCommandLineFlag(const char *str);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief compares string with read from stdin flag
+/// \param [in] string to compare
+/// \return 0 if str == flag otherwise not 0;
+int CompareWithStdinFlag(const char *str);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief compares string with equation type input flag
+/// \param [in] string to compare
+/// \return 0 if str == flag otherwise not 0;
+int CompareWithEquationFlag(const char *str);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#ifndef NDEBUG
+/// \brief compares string with testing mode flag
+/// \param [in] string to compare
+/// \return 0 if str == flag otherwise not 0;
+int CompareWithTestFlag(const char *str);
+#endif
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -190,5 +243,7 @@ Errors Fgets_s(char *name, const size_t size, FILE *fp);
 /// \param [in] file from which str was read
 /// \return true (1) if fgets has read all string. false (0) if something is in the string (except '\n');
 bool HasReadAllStringWithFgets(const char *str, const size_t size, FILE *fp);
+
+//---------------------------------------------------------------------------------------------------------------------
 
 #endif // INPUT_AND_OUTPUT_H

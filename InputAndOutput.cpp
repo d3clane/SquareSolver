@@ -3,7 +3,6 @@
 //
 
 #include "InputAndOutput.h"
-
 //---------------------------------------------------------------------------------------------------------------------
 
 static inline Errors MenuInputCoeffs();
@@ -20,7 +19,7 @@ static inline void PrintStdinHelp();
 static inline void PrintEquationHelp();
 static inline void PrintHelpFuncHelp();
 
-#ifdef TEST
+#ifndef NDEBUG
 static inline void PrintTestHelp();
 #endif
 
@@ -30,21 +29,25 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-const char *const FILE_FlAG                =  "-f";
+const char *const FILE_FLAG                =         "-f";
+const char *const FILE_FLAG_LONG           =     "--file";
 
-const char *const COMMAND_LINE_FLAG        =  "-c";
+const char *const COMMAND_LINE_FLAG        =         "-c";
+const char *const COMMAND_LINE_FLAG_LONG   =      "--cmd";
 
-const char *const STDIN_FLAG               =  "-s";
+const char *const STDIN_FLAG               =         "-s";
+const char *const STDIN_FLAG_LONG          =    "--stdin";
 
-#ifdef TEST
-const char *const TEST_MODE_FLAG           =  "-t";
+#ifndef NDEBUG
+const char *const TEST_MODE_FLAG           =         "-t";
+const char *const TEST_MODE_FLAG_LONG      =     "--test";
 #endif
 
-const char *const EQUATION_INPUT_MODE_FLAG = "-eq";
+const char *const EQUATION_INPUT_FLAG      =        "-eq";
+const char *const EQUATION_INPUT_FLAG_LONG = "--equation";
 
-const char *const HELP_FLAG                = "-h";
-
-const char *const ALL_FLAGS                = "-f-c-s-t-eq-h";
+const char *const HELP_FLAG                =         "-h";
+const char *const HELP_FLAG_LONG           =     "--help";
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -67,6 +70,7 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
         } else if (commandLineFlags.readFromStdin) {
             inputError = ReadFileNameFromStdin(fileName, FILE_NAME_LENGTH);
         } else {
+            UpdateError(Errors::UNKNOWN_COMMAND_LINE_FLAG);
             return Errors::UNKNOWN_COMMAND_LINE_FLAG;
         }
 
@@ -86,18 +90,19 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
 
     if (commandLineFlags.readFromStdin) {
 
-        if (commandLineFlags.equationInputMode) inputError = ReadEquationCoeffsFromStdin(a, b, c);
+        if (commandLineFlags.equationInputMode) 
+             inputError = ReadEquationCoeffsFromStdin(a, b, c);
         else inputError = ReadCoeffsFromStdin(a, b, c);
 
     } else if (commandLineFlags.readFromCommandLine) {
 
-        if (commandLineFlags.equationInputMode) inputError = ReadEquationCoeffsFromCommandLine(argc, argv, a, b, c);
+        if (commandLineFlags.equationInputMode) 
+             inputError = ReadEquationCoeffsFromCommandLine(argc, argv, a, b, c);
         else inputError = ReadCoeffsFromCommandLine(argc, argv, a, b, c);
 
     } else {
-
+        UpdateError(Errors::UNKNOWN_COMMAND_LINE_FLAG);
         return Errors::UNKNOWN_COMMAND_LINE_FLAG;
-
     }
 
     return inputError;
@@ -112,19 +117,19 @@ CommandLineFlags ReadCommandLineFlags(const int argc, const char *argv[]) {
 
     for (int i = 0; i < argc; ++i) {
 
-        if (strcmp(argv[i], FILE_FlAG) == 0)
+        if      (       CompareWithFileFlag(argv[i]) == 0)
             commandLineFlags.readFromFile = 1;
-        else if (strcmp(argv[i], COMMAND_LINE_FLAG) == 0)
+        else if (CompareWithCommandLineFlag(argv[i]) == 0)
             commandLineFlags.readFromCommandLine = 1;
-        else if (strcmp(argv[i], STDIN_FLAG) == 0)
+        else if (      CompareWithStdinFlag(argv[i]) == 0)
             commandLineFlags.readFromStdin = 1;
-        else if (strcmp(argv[i], EQUATION_INPUT_MODE_FLAG) == 0)
+        else if (   CompareWithEquationFlag(argv[i]) == 0)
             commandLineFlags.equationInputMode = 1;
-        else if (strcmp(argv[i], HELP_FLAG) == 0)
+        else if (       CompareWithHelpFlag(argv[i]) == 0)
             commandLineFlags.helpMode = 1;
 
-#ifdef TEST
-        if (strcmp(argv[i], TEST_MODE_FLAG) == 0)
+#ifndef NDEBUG
+        if (CompareWithTestFlag(argv[i]) == 0)
             commandLineFlags.testMode = 1;
 #endif
 
@@ -150,17 +155,31 @@ Errors ReadCoeffsFromCommandLine(const int argc, const char *argv[], double *a, 
 
     Errors readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
     for (int i = 0; i < argc - 3; ++i) { // till (argc - 3) cause also reading (i + 3)
-        if (strcmp(argv[i], COMMAND_LINE_FLAG) == 0) {
+        if (CompareWithCommandLineFlag(argv[i]) == 0) {
 
-            if (sscanf(argv[i + 1], "%lf%*c", a) != 1) readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
-            if (sscanf(argv[i + 2], "%lf%*c", b) != 1) readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
-            if (sscanf(argv[i + 3], "%lf%*c", c) != 1) readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
+            if (sscanf(argv[i + 1], "%lf%*c", a) != 1) 
+                readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
+            if (sscanf(argv[i + 2], "%lf%*c", a) != 1) 
+                readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
+            if (sscanf(argv[i + 3], "%lf%*c", a) != 1) 
+                readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
 
             break;
         }
     }
+    
+    if (readError != Errors::NO_ERRORS) {
+        UpdateError(readError);
+        return readError;
+    }
+    
+    readError = CheckCoeffsIsFinite(*a, *b, *c);
 
-    return readError != Errors::NO_ERRORS ? readError : CheckCoeffsIsFinite(*a, *b, *c);
+    if (readError != Errors::NO_ERRORS) {
+        UpdateError(readError);
+    }
+    
+    return readError;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -174,18 +193,33 @@ Errors ReadEquationCoeffsFromCommandLine(const int argc, const char *argv[], dou
     Errors readError = Errors::READING_EQUATION_FROM_COMMAND_LINE_ERROR;
 
     for (int i = 0; i < argc - 1; ++i) { // till (argc - 3) cause also reading (i + 3)
-        if (strcmp(argv[i], EQUATION_INPUT_MODE_FLAG) == 0) {
-
-            if (strlen(argv[i + 1]) + 1 >= MAX_EQUATION_SIZE)
-                return Errors::EXTRA_SYMBOLS_IN_LINE;
+        if (CompareWithEquationFlag(argv[i]) == 0) {
+    
+            if (strlen(argv[i + 1]) + 1 >= MAX_EQUATION_SIZE) {
+                UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
+                return      Errors::EXTRA_SYMBOLS_IN_LINE;
+            }
 
             readError = ParseQuadraticEquation(argv[i + 1], a, b, c);
-            
+
             break;
         }
     }
 
-    return readError != Errors::NO_ERRORS ? readError : CheckCoeffsIsFinite(*a, *b, *c);
+    if (readError == Errors::READING_EQUATION_FROM_COMMAND_LINE_ERROR) {
+         UpdateError(Errors::READING_EQUATION_FROM_COMMAND_LINE_ERROR);
+    }
+    
+    if (readError != Errors::NO_ERRORS) 
+        return readError;
+    
+    readError = CheckCoeffsIsFinite(*a, *b, *c);
+
+    if (readError != Errors::NO_ERRORS) {
+        UpdateError(readError);
+    }
+
+    return readError;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -197,18 +231,24 @@ Errors ReadFileNameFromCommandLine(const int argc, const char *argv[], char *nam
     Errors readError = Errors::READING_FILE_NAME_FROM_COMMAND_LINE_ERROR;
 
     for (int i = 0; i < argc - 1; ++i) {
-        if (strcmp(argv[i], FILE_FlAG) == 0) {
+        if (CompareWithFileFlag(argv[i]) == 0) {
             readError = Errors::NO_ERRORS;
             strncpy(name, argv[i + 1], size - 1);
 
-            if (strlen(argv[i + 1]) > size - 1) 
-                return Errors::EXTRA_SYMBOLS_IN_LINE;
+            if (strlen(argv[i + 1]) > size - 1) {
+                UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
+                return      Errors::EXTRA_SYMBOLS_IN_LINE;
+            }
             
             name[size - 1] = '\0';
             break;
         }
     }
 
+    if (readError != Errors::NO_ERRORS) {
+        UpdateError(readError);
+    }
+    
     return readError;
 }
 
@@ -227,10 +267,10 @@ Errors ReadCoeffsFromStdin(double *a, double *b, double *c) {
     while (true) {
         quitInput = MenuInputCoeffs();
         scannedVals = fscanf(stdin, "%lf %lf %lf", a, b, c);
-        
+
+        if (quitInput != Errors::NO_ERRORS) break;
         if (SkipSymbols(stdin) == 0) {
             if (scannedVals == NUMBER_OF_READ_VALUES || 
-                quitInput != Errors::NO_ERRORS       || 
                 scannedVals == EOF)
                     break;
                 
@@ -240,10 +280,20 @@ Errors ReadCoeffsFromStdin(double *a, double *b, double *c) {
     }
 
     if (scannedVals == EOF) {
-        return Errors::READING_COEFFS_FROM_STDIN_ERROR;
+        UpdateError(Errors::READING_COEFFS_FROM_STDIN_ERROR);
+        return      Errors::READING_COEFFS_FROM_STDIN_ERROR;
     }
 
-    return quitInput != Errors::NO_ERRORS ? quitInput : CheckCoeffsIsFinite(*a, *b, *c);
+    if (quitInput != Errors::NO_ERRORS) 
+        return quitInput;
+
+    Errors error = CheckCoeffsIsFinite(*a, *b, *c);
+
+    if (error != Errors::NO_ERRORS) {
+        UpdateError(error);
+    }
+
+    return error;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -259,11 +309,14 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c) {
     while (true) {
         quitInput = MenuInputEquation();
 
-        if (fgets(equation, MAX_EQUATION_SIZE, stdin) == nullptr) 
-            return Errors::READING_EQUATION_FROM_STDIN_ERROR;
+        if (fgets(equation, MAX_EQUATION_SIZE, stdin) == nullptr) {
+            UpdateError(Errors::READING_EQUATION_FROM_STDIN_ERROR);
+            return      Errors::READING_EQUATION_FROM_STDIN_ERROR;
+        }
 
         if (HasReadAllStringWithFgets(equation, MAX_EQUATION_SIZE, stdin)) {
-            if (quitInput == Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT ||  ParseQuadraticEquation(equation, a, b, c) == Errors::NO_ERRORS) {
+            if (quitInput == Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT || 
+                ParseQuadraticEquation(equation, a, b, c) == Errors::NO_ERRORS) {
                 break;
             }
         } else {
@@ -273,7 +326,16 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c) {
         printf("Not valid input\n");
     }
 
-    return quitInput != Errors::NO_ERRORS ? quitInput : CheckCoeffsIsFinite(*a, *b, *c);
+    if (quitInput != Errors::NO_ERRORS) 
+        return quitInput;
+
+    Errors error = CheckCoeffsIsFinite(*a, *b, *c);
+
+    if (error != Errors::NO_ERRORS) {
+        UpdateError(error);
+    }
+
+    return error;    
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -285,11 +347,15 @@ Errors ReadFileNameFromStdin(char *name, const size_t size) {
 
     Errors readError = Fgets_s(name, size, stdin);
 
-    if (readError == Errors::READING_FROM_STDIN_ERROR)
-        readError = Errors::READING_FILE_NAME_FROM_STDIN_ERROR;
+    if (readError == Errors::READING_FROM_STDIN_ERROR) {
+        UpdateError( Errors::READING_FILE_NAME_FROM_STDIN_ERROR);
+        readError =  Errors::READING_FILE_NAME_FROM_STDIN_ERROR;
+    }
 
-    if (!HasReadAllStringWithFgets(name, size, stdin))
-        return Errors::EXTRA_SYMBOLS_IN_LINE;
+    if (!HasReadAllStringWithFgets(name, size, stdin)) {
+        UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
+        return      Errors::EXTRA_SYMBOLS_IN_LINE;
+    }
     
     return readError;
 }
@@ -305,13 +371,26 @@ Errors ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
 
     Errors error = Errors::NO_ERRORS;
 
-    if (fscanf(fp, "%lf %lf %lf", a, b, c) != NUMBER_OF_READ_VALUES)
-        error = Errors::READING_COEFFS_FROM_FILE_ERROR;
+    if (fscanf(fp, "%lf %lf %lf", a, b, c) != NUMBER_OF_READ_VALUES) {
+        UpdateError(Errors::READING_COEFFS_FROM_FILE_ERROR);
+        return      Errors::READING_COEFFS_FROM_FILE_ERROR;
+    }
 
-    if (SkipSymbols(fp) != 0)
-        return Errors::EXTRA_SYMBOLS_IN_LINE;
+    if (SkipSymbols(fp) != 0) {
+        UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
+        return      Errors::EXTRA_SYMBOLS_IN_LINE;
+    }
+
+    if (error != Errors::NO_ERRORS) 
+        return error;
     
-    return error != Errors::NO_ERRORS ? error : CheckCoeffsIsFinite(*a, *b, *c);
+    error = CheckCoeffsIsFinite(*a, *b, *c);
+
+    if (error != Errors::NO_ERRORS) {
+        UpdateError(error);
+    }
+
+    return error;    
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -325,11 +404,16 @@ Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
     static char equation[MAX_EQUATION_SIZE] = "";
 
     Errors error = Fgets_s(equation, MAX_EQUATION_SIZE, fp);
-    if (error == Errors::READING_FROM_STDIN_ERROR)
-        error = Errors::READING_EQUATION_FROM_FILE_ERROR;
+
+    if (error ==    Errors::READING_FROM_STDIN_ERROR) {
+        UpdateError(Errors::READING_EQUATION_FROM_FILE_ERROR);
+        return      Errors::READING_EQUATION_FROM_FILE_ERROR;
+    }
     
-    if (!HasReadAllStringWithFgets(equation, MAX_EQUATION_SIZE, fp)) 
-        return Errors::EXTRA_SYMBOLS_IN_LINE;
+    if (!HasReadAllStringWithFgets(equation, MAX_EQUATION_SIZE, fp)) {
+        UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
+        return      Errors::EXTRA_SYMBOLS_IN_LINE;
+    }
 
     return ParseQuadraticEquation(equation, a, b, c);
 }
@@ -351,14 +435,16 @@ Errors PrintRoots(const NumberOfRoots numberOfRoots, const double x1, const doub
         case TWO_ROOTS:
             assert(isfinite(x1));
             assert(isfinite(x2));
-
             printf("Two roots: %.8lf and %.8lf\n", x1, x2);
             break;
+
         case INF_ROOTS:
             printf("Infinity number of roots\n");
             break;
+
         default:
-            return Errors::INVALID_NUMBER_OF_ROOTS;
+            UpdateError(Errors::INVALID_NUMBER_OF_ROOTS);
+            return      Errors::INVALID_NUMBER_OF_ROOTS;
     }
 
     return Errors::NO_ERRORS;
@@ -369,7 +455,7 @@ Errors Help(const int argc, const char *argv[]) {
 
     for (int i = 0; i < argc; ++i) {
 
-        if (strcmp(argv[i], HELP_FLAG) == 0) {
+        if (CompareWithHelpFlag(argv[i]) == 0) {
             if (i == argc - 1) 
                 PrintStandartHelp();
             else {
@@ -380,6 +466,10 @@ Errors Help(const int argc, const char *argv[]) {
 
             break;
         }
+    }
+
+    if (error == Errors::NO_HELPING_FLAG) {
+        UpdateError(error);
     }
 
     return error;
@@ -393,6 +483,10 @@ static inline Errors MenuInputCoeffs() {
     int ch = getc(stdin);
     ungetc(ch, stdin);
 
+    if (ch == 'q') {
+        UpdateError(Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT);
+    }
+    
     return ch == 'q' ? Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT: Errors::NO_ERRORS;
 }
 
@@ -405,6 +499,10 @@ static inline Errors MenuInputEquation() {
     int ch = getc(stdin);
     ungetc(ch, stdin);
 
+    if (ch == '\n') {
+        UpdateError(Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT);
+    }
+    
     return ch == '\n' ? Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT : Errors::NO_ERRORS;
 }
 
@@ -423,7 +521,7 @@ static inline void PrintStandartHelp() {
            "\t\t\t-h - flag used for receiving help and get info about program\n"
            "\t\t\tafter using -h flag another flags can be specified to get info about them\n");
 
-#ifdef TEST
+#ifndef NDEBUG
     printf("\t\t\t-t flag activated testing mode\n");
 #endif 
 
@@ -442,25 +540,31 @@ static inline void PrintStandartHelp() {
 
 static inline Errors PrintFlagHelp(const char *flag) {
 
-#ifdef TEST
-    if (strcmp(flag, TEST_MODE_FLAG) == 0) {
+#ifndef NDEBUG
+    if (CompareWithTestFlag(flag) == 0) {
         PrintTestHelp();
-        return Errors::NO_ERRORS;
     }
 #endif
 
-    if (strcmp(flag, FILE_FlAG) == 0)
+    if (CompareWithFileFlag(flag) == 0)
         PrintFileHelp();
-    else if (strcmp(flag, COMMAND_LINE_FLAG) == 0)
+
+    else if (CompareWithCommandLineFlag(flag) == 0)
         PrintCommandLineHelp();
-    else if (strcmp(flag, STDIN_FLAG) == 0)
+
+    else if (CompareWithStdinFlag(flag) == 0)
         PrintStdinHelp();
-    else if (strcmp(flag, EQUATION_INPUT_MODE_FLAG) == 0)
+
+    else if (CompareWithEquationFlag(flag) == 0)
         PrintEquationHelp();
-    else if (strcmp(flag, HELP_FLAG) == 0)
+
+    else if (CompareWithHelpFlag(flag) == 0)
         PrintHelpFuncHelp();
-    else 
+
+    else {
+        UpdateError(Errors::HELPING_ERROR);
         return Errors::HELPING_ERROR;
+    }
 
     return Errors::NO_ERRORS;
 }
@@ -468,7 +572,7 @@ static inline Errors PrintFlagHelp(const char *flag) {
 
 static inline void PrintFileHelp() {
     printf("Getting input from file\n"
-           "\t-f flag (shortcut)\n"
+           "\t --file (shortcut: -f) flag\n"
            "\tif -c is used with -f file name have to be entered in command line right after -f flag\n"
            "\tif -c is not used program will ask to enter file name in stdin\n");
         
@@ -483,7 +587,7 @@ static inline void PrintFileHelp() {
 
 static inline void PrintCommandLineHelp() {
     printf("Getting input from command line\n"
-           "\t-c flag (shortcut)\n"
+           "\t --cmd (shortcut: -c) flag)\n"
            "\tif -c is used program expects input from command line (coefficients) right after -c\n");
 
     printf("Examples of usage: \n"
@@ -497,7 +601,7 @@ static inline void PrintCommandLineHelp() {
 
 static inline void PrintStdinHelp() {
     printf("Getting input from stdin\n"
-           "\t-s flag (shortcut)\n"
+           "\t --stdin (shortcut: -s)\n"
            "\tif -s flag is used program expects input from stdandard input\n"
            "\tif -s and -c flags are not specified -s flag is used\n"
            "\tif -s and -c flags are specified at once -s flag is used\n");
@@ -511,7 +615,7 @@ static inline void PrintStdinHelp() {
 
 static inline void PrintEquationHelp() {
     printf("Getting equation type info\n"
-           "\t-eq flag (shortcut)\n"
+           "\t --equation (shortcut: -eq) flag\n"
            "\tif -c is used with -eq equation have to be entered right after -eq flag\n");
     
     printf("Example: \n"
@@ -522,7 +626,7 @@ static inline void PrintEquationHelp() {
 
 static inline void PrintHelpFuncHelp() {
     printf("Help flag\n"
-           "\t-h (shortcut)\n"
+           "\t --help (shotrcut: -h)\n"
            "\tflag is used for receiving help and get info about program\n"
            "\tafter using -h flag other flags can be specified to get info about them\n");
 
@@ -530,10 +634,10 @@ static inline void PrintHelpFuncHelp() {
            "\t-h -f -eq\n\n\n\n");
 }
 
-#ifdef TEST
+#ifndef NDEBUG
 static inline void PrintTestHelp() {
     printf("Program enters testing mode\n"
-           "\t-t (shortcut)\n"
+           "\t --test (shortcut: -t)\n"
            "\tprogram reads tests from %s file\n\n\n\n", FILE_NAME);
 }
 #endif
@@ -547,6 +651,10 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp) 
 
     *fp = fopen(name, mode);
 
+    if (*fp == nullptr) {
+        UpdateError(Errors::FILE_OPENING_ERROR);
+    }
+    
     return (*fp) ? Errors::NO_ERRORS : Errors::FILE_OPENING_ERROR;
 }
 
@@ -556,6 +664,7 @@ Errors Fgets_s(char *name, const size_t size, FILE *fp) {
     assert(name);
 
     if (!fgets(name, (int) size, fp)) {
+        UpdateError(Errors::READING_FROM_STDIN_ERROR);
         return Errors::READING_FROM_STDIN_ERROR;
     }
 
@@ -577,3 +686,45 @@ bool HasReadAllStringWithFgets(const char *str, const size_t size, FILE *fp) {
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+
+int CompareWithHelpFlag(const char *str) {
+    return strcmp(str, HELP_FLAG) && 
+           strcmp(str, HELP_FLAG_LONG);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+int CompareWithFileFlag(const char *str) {
+    return strcmp(str, FILE_FLAG) && 
+           strcmp(str, FILE_FLAG_LONG);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+int CompareWithCommandLineFlag(const char *str) {
+    return strcmp(str, COMMAND_LINE_FLAG) && 
+           strcmp(str, COMMAND_LINE_FLAG_LONG);    
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+int CompareWithStdinFlag(const char *str) {
+    return strcmp(str, STDIN_FLAG) && 
+           strcmp(str, STDIN_FLAG_LONG);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+int CompareWithEquationFlag(const char *str) {
+    return strcmp(str, EQUATION_INPUT_FLAG) && 
+           strcmp(str, EQUATION_INPUT_FLAG_LONG);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#ifndef NDEBUG
+int CompareWithTestFlag(const char *str) {
+    return strcmp(str, TEST_MODE_FLAG) && 
+           strcmp(str, TEST_MODE_FLAG_LONG);
+}
+#endif

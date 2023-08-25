@@ -4,15 +4,20 @@
 
 #include "TestingMode.h"
 
-static inline void Swap(double *a, double *b);
+//---------------------------------------------------------------------------------------------------------------------
+
+const char *const FILE_NAME = "test.txt";
+const char *const FILE_MODE = "r";   
 
 //---------------------------------------------------------------------------------------------------------------------
 
 Errors Testing() {
     FILE *fp = fopen(FILE_NAME, FILE_MODE);
 
-    if (!fp)
-        return Errors::FILE_OPENING_ERROR;
+    if (!fp) {
+        UpdateError(Errors::FILE_OPENING_ERROR);
+        return      Errors::FILE_OPENING_ERROR;
+    }
 
     static const int HAVE_TO_READ_VALUES_AT_ONCE = 6;
 
@@ -24,7 +29,8 @@ Errors Testing() {
     int testNumber = 1;
 
     while (true) {
-        int numberOfSuccessfullyReadValues = fscanf(fp, "%d %lf %lf %lf %lf %lf", &numberOfRoots, &a, &b, &c, &testX1, &testX2);
+        int numberOfSuccessfullyReadValues = fscanf(fp, "%d %lf %lf %lf %lf %lf", 
+                                                    &numberOfRoots, &a, &b, &c, &testX1, &testX2);
     
         if (numberOfSuccessfullyReadValues != HAVE_TO_READ_VALUES_AT_ONCE) 
             break;
@@ -39,16 +45,23 @@ Errors Testing() {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#define TESTFAILED "Test %d failed:\nprogram result: "
-#define TESTOK "Test %d: test is OK\n"
+#define TEST_FAILED "Test %d failed:\nprogram result: "
+#define TEST_OK "Test %d: test is OK\n"
 
 Errors TestOneEquation(double a, double b, double c, 
                        double testX1, double testX2,
                        int numberOfRoots, int testNumber) {
+    assert(isfinite(a));
+    assert(isfinite(b));
+    assert(isfinite(c));
+    assert(isfinite(testX1));
+    assert(isfinite(testX2));
+
     double myX1 = NAN, myX2 = NAN;
 
     NumberOfRoots myNumberOfRoots = SolveQuadraticEquation(a, b, c, &myX1, &myX2);
-    NumberOfRoots testNumberOfRoots = (numberOfRoots >= 0 && numberOfRoots <= 2) ? (NumberOfRoots) numberOfRoots : INF_ROOTS;
+    NumberOfRoots testNumberOfRoots = (numberOfRoots >= 0 && numberOfRoots <= 2) ? 
+                                      (NumberOfRoots) numberOfRoots : INF_ROOTS;
 
     if (testNumberOfRoots != myNumberOfRoots) {
         printf("Test %d: number of roots do not match\n", testNumber);
@@ -59,50 +72,46 @@ Errors TestOneEquation(double a, double b, double c,
     } else {
         switch (myNumberOfRoots) {
             case ZERO_ROOTS:
-                printf(TESTOK, testNumber);
+                printf(TEST_OK, testNumber);
                 break;
-                
+
             case ONE_ROOT:
                 if (Compare(testX1, myX1) == EQUAL) {
-                    printf(TESTOK, testNumber);
+                    printf(TEST_OK, testNumber);
                 } else {
-                    printf(TESTFAILED "%lf  test value: %lf\n",
+                    printf(TEST_FAILED "%lf  test value: %lf\n",
                             testNumber, myX1, testX1);
                 }
 
                 break;
 
             case TWO_ROOTS:
-                if (Compare(testX1, testX2) == GREATER) Swap(&testX1, &testX2); // testX1 <= testX2
+                if (Compare(testX1, testX2) == GREATER) 
+                    Swap((void *) &testX1, (void *) &testX2, sizeof(testX1)); // testX1 <= testX2
 
                 if (Compare(testX1, myX1) == EQUAL && Compare(testX2, myX2) == EQUAL) {
-                    printf(TESTOK, testNumber);
+                    printf(TEST_OK, testNumber);
                 } else {
-                    printf(TESTFAILED "%lf and %lf  test values: %lf and %lf\n",
+                    printf(TEST_FAILED "%lf and %lf  test values: %lf and %lf\n",
                             testNumber, myX1, myX2, testX1, testX2);
                 }
 
                 break;
             case INF_ROOTS:
-                printf(TESTOK, testNumber);
+                printf(TEST_OK, testNumber);
                 break;
 
             default:
-                return Errors::INVALID_NUMBER_OF_ROOTS;
+                UpdateError(Errors::INVALID_NUMBER_OF_ROOTS);
+                return      Errors::INVALID_NUMBER_OF_ROOTS;
         }
     }
 
     return Errors::NO_ERRORS;    
 }
 
-#undef TESTOK
-#undef TESTFAILED
+#undef TEST_OK
+#undef TEST_FAILED
 
 
 //---------------------------------------------------------------------------------------------------------------------
-
-static inline void Swap(double *a, double *b) {
-    double tmp = *a;
-                 *a = *b;
-                      *b = tmp;
-}

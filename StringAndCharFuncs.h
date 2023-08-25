@@ -25,6 +25,7 @@ void DeleteSpaces(char *string);
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief skip line symbols until the new line or EOF
+/// \param [in] fp File to skip symbols in (could be stdin)
 /// \return number of non blank symbols read
 int SkipSymbols(FILE *fp);
 
@@ -44,6 +45,12 @@ int IsSign(const char c);
 /// \param [in] c character to change
 /// \return the opposite sign if c is a sign otherwise return c
 char ChangeSign(const char c);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief changes input string to lower case
+/// \param [out] str input string that changes to string in lower case
+void StringToLower(char *str);
 
 //---------------------------------------------------------------------------------------------------------------------
 

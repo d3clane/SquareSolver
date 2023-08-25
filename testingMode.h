@@ -14,13 +14,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "DoubleComparisons.h"
+#include "DoubleFuncs.h"
 #include "Solver.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 
-static const char *const FILE_NAME = "test.txt";    // делать так или в спп а сюда экстерн
-static const char *const FILE_MODE = "r";   
+extern const char *const FILE_NAME;
+extern const char *const FILE_MODE;   
 
 //---------------------------------------------------------------------------------------------------------------------
 
