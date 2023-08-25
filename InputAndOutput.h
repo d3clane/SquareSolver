@@ -230,8 +230,9 @@ Errors Help(const int argc, const char *argv[]);
 
 /// \brief fgets with deleting new line symbol
 ///
-/// \param [out] name
-/// \param [in] size
+/// \param [out] name string to read in
+/// \param [in] size  size of the buffer of the string
+/// \param [in] fp pointer to the FILE to read from
 /// \return 0 if reading is successful otherwise not 0
 Errors Fgets_s(char *name, const size_t size, FILE *fp);
 

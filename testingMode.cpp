@@ -4,6 +4,7 @@
 
 #include "TestingMode.h"
 
+#define RED "\x1b[31;1m"
 //---------------------------------------------------------------------------------------------------------------------
 
 const char *const FILE_NAME = "test.txt";
@@ -29,7 +30,7 @@ Errors Testing() {
     int testNumber = 1;
 
     while (true) {
-        int numberOfSuccessfullyReadValues = fscanf(fp, "%d %lf %lf %lf %lf %lf", 
+        int numberOfSuccessfullyReadValues = fscanf(fp, "NUM %d COEFF %lf %lf %lf ROOTS %lf %lf", 
                                                     &numberOfRoots, &a, &b, &c, &testX1, &testX2);
     
         if (numberOfSuccessfullyReadValues != HAVE_TO_READ_VALUES_AT_ONCE) 
@@ -64,7 +65,7 @@ Errors TestOneEquation(double a, double b, double c,
                                       (NumberOfRoots) numberOfRoots : INF_ROOTS;
 
     if (testNumberOfRoots != myNumberOfRoots) {
-        printf("Test %d: number of roots do not match\n", testNumber);
+        printf(RED "Test %d: number of roots do not match\n", testNumber);
 
         printf("program expected %s, test has %s\n",
                 ConvertEnumToString(myNumberOfRoots),
@@ -97,6 +98,7 @@ Errors TestOneEquation(double a, double b, double c,
                 }
 
                 break;
+
             case INF_ROOTS:
                 printf(TEST_OK, testNumber);
                 break;
@@ -107,11 +109,11 @@ Errors TestOneEquation(double a, double b, double c,
         }
     }
 
+    UpdateError(Errors::NO_ERRORS);
     return Errors::NO_ERRORS;    
 }
 
 #undef TEST_OK
 #undef TEST_FAILED
-
 
 //---------------------------------------------------------------------------------------------------------------------

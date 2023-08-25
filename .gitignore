@@ -1,3 +1,4 @@
-vscode/
+.vscode/
 Objects/
 inputFiles/
+.DS_Store

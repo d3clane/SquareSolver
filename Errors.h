@@ -58,7 +58,7 @@ const int MAX_MY_FILE_NAME = 64;
 
 /// \brief Contains info about errors - File with error, line with error, error code. 
 /// \warning Have to be updated with UpdateError() only
-struct ErrorInfo {
+struct ErrorInfo_t {
     Errors error; ///< error code
     char fileWithError[MAX_MY_FILE_NAME]; ///< __FILE__ (file name with error)
     int lineWithError; ///< __LINE__ (line with error)
@@ -66,7 +66,7 @@ struct ErrorInfo {
 
 /// \brief global errorInfo constant with error info
 /// \warning this variable have to be changes only with UpdateError()
-extern ErrorInfo errorInfo;
+extern ErrorInfo_t ErrorInfo;
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -77,15 +77,17 @@ extern ErrorInfo errorInfo;
 /// \details copyLineNumber __LINE__ define at the moment macros is valled
 /// \param [in] ERROR Errors enum with error occurred in program
 /// \attention macros is multiline and so in if clause have to be in brackets
-#define UpdateError(ERROR) strcpy(errorInfo.fileWithError, __FILE__); \
-                                  errorInfo.lineWithError = __LINE__; \
-                                  errorInfo.error = ERROR;
+#define UpdateError(ERROR) {                   \
+    strcpy(ErrorInfo.fileWithError, __FILE__); \
+    ErrorInfo.lineWithError = __LINE__;        \
+    ErrorInfo.error = ERROR;                   \
+    }
 
 #else
 
 /// \brief updates only error code without debug info
 /// \param [in] ERROR
-#define UpdateError(ERROR) errorInfo.error = ERROR
+#define UpdateError(ERROR) ErrorInfo.error = ERROR
 
 #endif
 
@@ -107,4 +109,4 @@ Errors CheckCoeffsIsFinite(const double a, const double b, const double c);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#endif //ERRORS_H
+#endif // ERRORS_H

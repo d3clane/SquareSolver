@@ -117,7 +117,7 @@ CommandLineFlags ReadCommandLineFlags(const int argc, const char *argv[]) {
 
     for (int i = 0; i < argc; ++i) {
 
-        if      (       CompareWithFileFlag(argv[i]) == 0)
+        if      (       CompareWithFileFlag(argv[i]) == 0) //TODO: fix
             commandLineFlags.readFromFile = 1;
         else if (CompareWithCommandLineFlag(argv[i]) == 0)
             commandLineFlags.readFromCommandLine = 1;
@@ -215,9 +215,7 @@ Errors ReadEquationCoeffsFromCommandLine(const int argc, const char *argv[], dou
     
     readError = CheckCoeffsIsFinite(*a, *b, *c);
 
-    if (readError != Errors::NO_ERRORS) {
-        UpdateError(readError);
-    }
+    UpdateError(readError);
 
     return readError;
 }
@@ -245,10 +243,8 @@ Errors ReadFileNameFromCommandLine(const int argc, const char *argv[], char *nam
         }
     }
 
-    if (readError != Errors::NO_ERRORS) {
-        UpdateError(readError);
-    }
-    
+    UpdateError(readError);
+
     return readError;
 }
 
@@ -289,9 +285,7 @@ Errors ReadCoeffsFromStdin(double *a, double *b, double *c) {
 
     Errors error = CheckCoeffsIsFinite(*a, *b, *c);
 
-    if (error != Errors::NO_ERRORS) {
-        UpdateError(error);
-    }
+    UpdateError(error);
 
     return error;
 }
@@ -331,9 +325,7 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c) {
 
     Errors error = CheckCoeffsIsFinite(*a, *b, *c);
 
-    if (error != Errors::NO_ERRORS) {
-        UpdateError(error);
-    }
+    UpdateError(error);
 
     return error;    
 }
@@ -349,7 +341,7 @@ Errors ReadFileNameFromStdin(char *name, const size_t size) {
 
     if (readError == Errors::READING_FROM_STDIN_ERROR) {
         UpdateError( Errors::READING_FILE_NAME_FROM_STDIN_ERROR);
-        readError =  Errors::READING_FILE_NAME_FROM_STDIN_ERROR;
+        return       Errors::READING_FILE_NAME_FROM_STDIN_ERROR;
     }
 
     if (!HasReadAllStringWithFgets(name, size, stdin)) {
@@ -386,9 +378,7 @@ Errors ReadCoeffsFromFile(double *a, double *b, double *c, FILE *fp) {
     
     error = CheckCoeffsIsFinite(*a, *b, *c);
 
-    if (error != Errors::NO_ERRORS) {
-        UpdateError(error);
-    }
+    UpdateError(error);
 
     return error;    
 }
@@ -447,6 +437,7 @@ Errors PrintRoots(const NumberOfRoots numberOfRoots, const double x1, const doub
             return      Errors::INVALID_NUMBER_OF_ROOTS;
     }
 
+    UpdateError(Errors::NO_ERRORS)
     return Errors::NO_ERRORS;
 }
 
@@ -468,9 +459,7 @@ Errors Help(const int argc, const char *argv[]) {
         }
     }
 
-    if (error == Errors::NO_HELPING_FLAG) {
-        UpdateError(error);
-    }
+    UpdateError(error);
 
     return error;
 }
@@ -565,6 +554,8 @@ static inline Errors PrintFlagHelp(const char *flag) {
         UpdateError(Errors::HELPING_ERROR);
         return Errors::HELPING_ERROR;
     }
+
+    UpdateError(Errors::NO_ERRORS);
 
     return Errors::NO_ERRORS;
 }

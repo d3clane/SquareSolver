@@ -99,9 +99,7 @@ Errors ParseQuadraticEquation(const char *equation, double *a, double *b, double
 
     errors = CheckCoeffsIsFinite(*a, *b, *c);
 
-    if (errors != Errors::NO_ERRORS) {
-        UpdateError(errors);
-    }
+    UpdateError(errors);
 
     return errors;
 }
@@ -180,6 +178,7 @@ Errors TransposeEquation(char *equation) {
 
     strcpy(equation, transposedEquation);
 
+    UpdateError(Errors::NO_ERRORS);
     return Errors::NO_ERRORS;
 }
 
@@ -254,6 +253,8 @@ static Errors CheckStringOnValidSymbols(char **posInEquation) {
 
     if (cntEquals > 1) {
         UpdateError(Errors::INVALID_EQUATION_FORMAT);
+    } else {
+        UpdateError(Errors::NO_ERRORS);
     }
 
     return cntEquals > 1 ? Errors::INVALID_EQUATION_FORMAT : Errors::NO_ERRORS;
@@ -275,9 +276,9 @@ static Errors CheckStringPowsAndCoeffs(char **posInEquation) {
             UpdateError(Errors::INVALID_EQUATION_FORMAT);
             return      Errors::INVALID_EQUATION_FORMAT;
         }   
-
     }  
 
+    UpdateError(Errors::NO_ERRORS);
     return Errors::NO_ERRORS;
 }
 
@@ -358,6 +359,6 @@ static int ValidPowCoeff(char **posInEquation) {
     
     if (!(IsSign(**posInEquation) || **posInEquation == '=' || **posInEquation == '\0')) // x^2+ x^2= no other cases
         return 0;
-
+    
     return 1;
 }

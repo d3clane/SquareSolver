@@ -5,23 +5,23 @@
 #include "Errors.h"
 
 
-#define RED "\x1b[41;1m"
+#define RED "\x1b[31;1m" // в отдельный файл
 
 #ifndef NDEBUG
     #define PrintError(X) fprintf(stderr, RED X \
-                                  "\nError occured in file %s in line %d\n", \
-                                  errorInfo.fileWithError, errorInfo.lineWithError)
+                          "\nError occured in file %s in line %d\n", \
+                          ErrorInfo.fileWithError, ErrorInfo.lineWithError)
 #else
     #define PrintError(X) fprintf(stderr, RED X);
 #endif
 
-ErrorInfo errorInfo = {.error = Errors::NO_ERRORS, .fileWithError = "aboba", .lineWithError = -1};
+ErrorInfo_t ErrorInfo = {.error = Errors::NO_ERRORS, .fileWithError = "aboba", .lineWithError = -1};
 
 //getopt 
 //---------------------------------------------------------------------------------------------------------------------
 
 int PrintErrors() {
-    switch (errorInfo.error) {
+    switch (ErrorInfo.error) {
         case Errors::NO_ERRORS:
             return 0;
         case Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT:
@@ -38,7 +38,8 @@ int PrintErrors() {
             PrintError("Unknown command line flag given\n"
                        "read available command line flags in README or -h");
             break;  
-
+            
+        //-----------------------------------
 
         case Errors::READING_FROM_STDIN_ERROR:
             PrintError("Error reading from stdin");
