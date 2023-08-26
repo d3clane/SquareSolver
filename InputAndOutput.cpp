@@ -246,13 +246,14 @@ Errors ReadCoeffsFromCommandLine(double *a, double *b, double *c,
     for (int i = 0; i < argc - 3; ++i) { // till (argc - 3) because also reading (i + 3)
         if (CompareWithFlag(argv[i], 
                             commandLineFlags + (int) FlagsIdInArray::COMMAND_LINE_FLAG) == 0) {
-
             readError = Errors::NO_ERRORS;
-            if (sscanf(argv[i + 1], "%lf%*c", a) != 1) 
+            char tmpchar = 0;
+
+            if (sscanf(argv[i + 1], "%lf%c", a, &tmpchar) != 1)
                 readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
-            if (sscanf(argv[i + 2], "%lf%*c", b) != 1) 
+            if (sscanf(argv[i + 2], "%lf%c", b, &tmpchar) != 1) 
                 readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
-            if (sscanf(argv[i + 3], "%lf%*c", c) != 1) 
+            if (sscanf(argv[i + 3], "%lf%c", c, &tmpchar) != 1) 
                 readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
 
             break;
