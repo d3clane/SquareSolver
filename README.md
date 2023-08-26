@@ -1,12 +1,13 @@
 # SquareSolver
 This program can solve quadratic equations.
 It has different modes of working (command line flags):
-1) -f - reading from file.
-2) -c - reading from command line.
-3) -s - reading from standard input 
-4) -t - testing mode
-5) -eq - program reads equation and solves it
-
+1) -f (--file)      - reading from file.
+2) -c (--cmd)       - reading from command line.
+3) -s (--stdin)     - reading from standard input 
+4) -t (--test)      - testing mode
+5) -eq (--equation) - program reads equation and solves it
+6) -h (--help)      - prints help
+   
 If -eq is not specified program is reading only 3 coefficients of the equation.
 
 > [!NOTE]
