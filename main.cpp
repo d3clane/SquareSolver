@@ -8,14 +8,15 @@
 int main(int argc, const char *argv[]) {
     //setbuf(stdout, NULL);
 
-    CommandLineFlags commandLineFlags = ReadCommandLineFlags(argc, argv);
+    unsigned int commandLineFlags = ReadCommandLineFlags(argc, argv);
 
 #ifndef NDEBUG
-    if (commandLineFlags.testMode)
+    if (GetFlag(commandLineFlags, (int) FlagsIdInArray::TEST_MODE_FLAG))
         return (int) Testing();
 #endif
-    if (commandLineFlags.helpMode) 
-        return (int) Help(argc, argv);
+
+    if (GetFlag(commandLineFlags, (int) FlagsIdInArray::HELP_FLAG))
+        return (int) Help(commandLineFlags);
     
     double a = NAN, b = NAN, c = NAN;
     double x1 = NAN, x2 = NAN;

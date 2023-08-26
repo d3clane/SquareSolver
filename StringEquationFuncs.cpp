@@ -113,7 +113,6 @@ PowerOfX GetXPowAndCoeff(const char *x, double *target, char **endPtr) {
     assert(x);
     assert(target);
     assert(endPtr);
-    assert(*endPtr);
 
     static const int BASE = 10;
     *target = strtod(x, endPtr);
@@ -236,6 +235,9 @@ static void TransposeOneSymbol(char **posInTransposed, char **posInGiven, bool h
 //---------------------------------------------------------------------------------------------------------------------
 
 static Errors CheckStringOnValidSymbols(char **posInEquation) {
+    assert(posInEquation);
+    assert(*posInEquation);
+
     int cntEquals = 0;
 
     while (**posInEquation != '\0') {
@@ -269,6 +271,9 @@ static Errors CheckStringOnValidSymbols(char **posInEquation) {
 //---------------------------------------------------------------------------------------------------------------------
 
 static Errors CheckStringPowsAndCoeffs(char **posInEquation) {
+    assert(posInEquation);
+    assert(*posInEquation);
+    
     while (**posInEquation != '\0') {
         if (!ValidCoeff(posInEquation)) {
             UpdateError(Errors::INVALID_EQUATION_FORMAT);

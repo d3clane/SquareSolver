@@ -14,7 +14,6 @@
 
 ErrorInfo_t ErrorInfo = {.error = Errors::NO_ERRORS, .fileWithError = "aboba", .lineWithError = -1};
 
-//getopt 
 //---------------------------------------------------------------------------------------------------------------------
 
 int PrintErrors() {
@@ -25,18 +24,20 @@ int PrintErrors() {
             printf("User quit the program\n");
             break;      
 
+        //----------------------------------- 
 
         case Errors::FILE_OPENING_ERROR:
             PrintError("Error opening the file");
             break;
 
+        //----------------------------------- 
 
         case Errors::UNKNOWN_COMMAND_LINE_FLAG:
             PrintError("Unknown command line flag given\n"
                        "read available command line flags in README or -h");
             break;  
             
-        //-----------------------------------
+        //----------------------------------- 
 
         case Errors::READING_FROM_STDIN_ERROR:
             PrintError("Error reading from stdin");
@@ -66,6 +67,7 @@ int PrintErrors() {
             PrintError("Error while reading file name from command line");
             break;
 
+        //----------------------------------- 
 
         case Errors::HELPING_ERROR:
             PrintError("Help can't print info about this flag :\n"
@@ -75,6 +77,7 @@ int PrintErrors() {
             PrintError("No helping flag specified. Help functions should not be used");
             return 0;
 
+        //----------------------------------- 
 
         case Errors::INVALID_EQUATION_FORMAT:
             PrintError("Invalid equation format given. Format should be\n"
@@ -88,6 +91,7 @@ int PrintErrors() {
             PrintError("Invalid number of roots given");
             break;
 
+        //----------------------------------- 
 
         case Errors::INVALID_STRING_NO_ENDING:
             PrintError("Invalid string: no ending ('\\0')");
@@ -96,9 +100,14 @@ int PrintErrors() {
             PrintError("Extra symbols printed by user");
             break;
 
+        //----------------------------------- 
+
         case Errors::DOUBLE_IS_OUT_OF_RANGE:
             PrintError("Double is out of range");
             break;
+
+        //----------------------------------- 
+        
         default:
             PrintError("No such error");
             break;

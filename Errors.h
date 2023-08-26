@@ -78,7 +78,6 @@ extern ErrorInfo_t ErrorInfo;
 /// \details copyFileName copy of __FILE__ define at the moment macros is called 
 /// \details copyLineNumber __LINE__ define at the moment macros is valled
 /// \param [in] ERROR Errors enum with error occurred in program
-/// \attention macros is multiline and so in if clause have to be in brackets
 #define UpdateError(ERROR) {                   \
     strcpy(ErrorInfo.fileWithError, __FILE__); \
     ErrorInfo.lineWithError = __LINE__;        \
@@ -88,7 +87,7 @@ extern ErrorInfo_t ErrorInfo;
 #else
 
 /// \brief updates only error code without debug info
-/// \param [in] ERROR
+/// \param [in] ERROR Errors enum with error occurred in program
 #define UpdateError(ERROR) ErrorInfo.error = ERROR
 
 #endif

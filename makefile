@@ -26,11 +26,10 @@ all: $(PROGRAMDIR)/$(TARGET)
 $(PROGRAMDIR)/$(TARGET): $(objects) 
 	$(CXX) $^ -o $(PROGRAMDIR)/$(TARGET) $(CXXFLAGS)
 
-$(OBJECTDIR)/%.o : %.cpp Errors.h # как поменять только файлы используюищие Errors.h при изменении Errors.h
+$(OBJECTDIR)/%.o : %.cpp Errors.h
 	$(CXX) -c $< -o $@ $(CXXFLAGS) 
 
 .PHONY: clean
 clean:
 	rm -rf $(OBJECTDIR)/*.o
-
 
