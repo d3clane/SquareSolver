@@ -28,10 +28,6 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-static const int MAX_FUNC_NUMBER = 3;
-
-//---------------------------------------------------------------------------------------------------------------------
-
 const static CommandLineFlags_t FILE_FLAG           = {.short_flag = "-f", .long_flag = "--file",
                                                        .Help = PrintFileHelp,};
 
@@ -67,25 +63,6 @@ const static CommandLineFlags_t commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_F
                                                                   EQUATION_INPUT_FLAG,
                                                                   HELP_FLAG,};
 #endif          
-
-//---------------------------------------------------------------------------------------------------------------------
-
-/// \brief Contains functions to call for every reading type flag
-struct TypesReadFuncs_t {
-    typedef Errors (*FlagFunc)(double *a, double *b, double *c,
-                               const int argc, const char *argv[],
-                               char *name, const size_t size,
-                               FILE *fp);
-
-    FlagFunc flagFuncs[MAX_FUNC_NUMBER]; ///< functions that can be used with this flag
-    
-    /// \brief IDs in flagFuncs array for every input type
-    enum ReadingId {
-        FILE  = 0,
-        STDIN = 1,
-        CMD   = 2,
-    };
-};
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -147,29 +124,20 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
     static char fileName[FILE_NAME_LENGTH] = "";
     Errors inputError = Errors::NO_ERRORS;
 
-    // TODO объединить в функции а то три копипаста
     if (GetFlag(flagsActivated, (int) FlagsIdInArray::FILE_FLAG)) {
 
         DeleteFlag(&flagsActivated, (int) FlagsIdInArray::FILE_FLAG);
+        
+        inputError = CallFlagFunc(flagsActivated, 
+                                  a, b, c, argc, argv, 
+                                  fileName, FILE_NAME_LENGTH, nullptr, 
+                                  &FileReadingFuncs);
 
-        for (size_t funcPos = 0; funcPos < MAX_FUNC_NUMBER; ++funcPos) {
-            if (GetFlag(flagsActivated, convertReadingId[funcPos])) {
-                
-                if (FileReadingFuncs.flagFuncs[funcPos]) {
-                    inputError = FileReadingFuncs.
-                                 flagFuncs[funcPos](a, b, c, argc, argv, 
-                                                    fileName, FILE_NAME_LENGTH, nullptr);
-                }
+        if (inputError != Errors::NO_ERRORS) return inputError;
 
-                if (inputError != Errors::NO_ERRORS) return inputError;
+        inputError = TryOpenFile(fileName, "r", &fp);
 
-                inputError = TryOpenFile(fileName, "r", &fp);
-
-                if (inputError != Errors::NO_ERRORS) return inputError;
-
-                break;
-            }
-        }
+        if (inputError != Errors::NO_ERRORS) return inputError;                          
 
         AddFlag(&flagsActivated, (int) FlagsIdInArray::FILE_FLAG);
         DeleteFlag(&flagsActivated, (int) FlagsIdInArray::COMMAND_LINE_FLAG);
@@ -177,31 +145,15 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
     }
 
     if (GetFlag(flagsActivated, (int) FlagsIdInArray::EQUATION_INPUT_FLAG)) {
-        for (size_t funcPos = 0; funcPos < MAX_FUNC_NUMBER; ++funcPos) {
-
-            if (GetFlag(flagsActivated, convertReadingId[funcPos])) {
-
-                if (EquationReadingFuncs.flagFuncs[funcPos])
-                    inputError = EquationReadingFuncs.flagFuncs[funcPos](a, b, c, argc, argv, 
-                                                                         nullptr, 0, fp);
-                
-                break;
-            }
-        }
+        inputError = CallFlagFunc(flagsActivated, 
+                                  a, b, c, argc, argv, 
+                                  nullptr, 0, fp, 
+                                  &EquationReadingFuncs);        
     } else {
-
-        for (size_t funcPos = 0; funcPos < MAX_FUNC_NUMBER; ++funcPos) {
-            if (GetFlag(flagsActivated, convertReadingId[funcPos])) {
-
-                if (CoeffsReadingFuncs.flagFuncs[funcPos])
-                    inputError = CoeffsReadingFuncs.flagFuncs[funcPos](a, b, c, argc, argv, 
-                                                                       nullptr, 0, fp);
-                
-                    
-                break;
-            }
-
-        }
+        inputError = CallFlagFunc(flagsActivated, 
+                                  a, b, c, argc, argv, 
+                                  nullptr, 0, fp, 
+                                  &CoeffsReadingFuncs);
     }
 
     fclose(fp);
@@ -787,3 +739,24 @@ void AddFlag(unsigned int *flagsActivated, int flagID) {
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+
+Errors CallFlagFunc(unsigned int flagsActivated,
+                    double *a, double *b, double *c,
+                    const int argc, const char *argv[],
+                    char *name, const size_t size, FILE *fp, 
+                    const TypesReadFuncs_t *Funcs) {
+    
+    for (size_t funcPos = 0; funcPos < MAX_FUNC_NUMBER; ++funcPos) {
+
+            if (GetFlag(flagsActivated, convertReadingId[funcPos])) {
+                if ((Funcs->flagFuncs)[funcPos])
+                    return (Funcs->flagFuncs)[funcPos](a, b, c, argc, argv, 
+                                                     name, size, fp);
+                
+                break;
+            }
+        }
+
+    UpdateError(Errors::UNKNOWN_COMMAND_LINE_FLAG);
+    return      Errors::UNKNOWN_COMMAND_LINE_FLAG;
+}                    

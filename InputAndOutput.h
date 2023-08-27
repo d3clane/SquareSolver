@@ -43,6 +43,29 @@ struct CommandLineFlags_t {
 
 //---------------------------------------------------------------------------------------------------------------------
 
+static const int MAX_FUNC_NUMBER = 3;
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief Contains functions to call for every reading type flag
+struct TypesReadFuncs_t {
+    typedef Errors (*FlagFunc)(double *a, double *b, double *c,
+                               const int argc, const char *argv[],
+                               char *name, const size_t size,
+                               FILE *fp);
+
+    FlagFunc flagFuncs[MAX_FUNC_NUMBER]; ///< functions that can be used with this flag
+    
+    /// \brief IDs in flagFuncs array for every input type
+    enum ReadingId {
+        FILE  = 0,
+        STDIN = 1,
+        CMD   = 2,
+    };
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+
 /// \brief ids of differrent flags in the array in cpp file
 enum class FlagsIdInArray {
     COMMAND_LINE_FLAG   = 0,
@@ -261,6 +284,29 @@ void DeleteFlag(unsigned int *flagsActivated, int flagID);
 /// \param [in] flagsActivated unsigned int number with bits indicating flags (0 - off, 1 - on)
 /// \param [in] flagID ID of the flag to get (in the null numeration)
 void AddFlag(unsigned int *flagsActivated, int flagID);
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief calls flag funcs from Funcs based on flagsActivated
+/// 
+/// \details not all params have to be given. It's based on Funcs funcs. 
+/// \details Redunant params could be any values
+/// \param [in] flagsActivated active command line flags 
+/// \param [in] a quadratic coefficient
+/// \param [in] b linear coefficient
+/// \param [in] c free coefficient
+/// \param [in] argc number of values in argv
+/// \param [in] argv argv number of values
+/// \param [out] name storage to write file name
+/// \param [in] size size of name storage
+/// \param [in] fp file pointer with opened file
+/// \param [in] Funcs funcs to call
+/// \return Funcs errors if they occurred, unknown flag error if no funcs called. Otherwise no errors
+Errors CallFlagFunc(unsigned int flagsActivated,
+                    double *a, double *b, double *c,
+                    const int argc, const char *argv[],
+                    char *name, const size_t size, FILE *fp,
+                    const TypesReadFuncs_t *Funcs);
 
 //---------------------------------------------------------------------------------------------------------------------
 #endif // INPUT_AND_OUTPUT_H
