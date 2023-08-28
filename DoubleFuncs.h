@@ -8,7 +8,9 @@
 #ifndef DOUBLE_COMPARISONS_H
 #define DOUBLE_COMPARISONS_H
 
+#include <assert.h>
 #include <math.h>
+#include <string.h>
 
 //--------------------------------------------------------------------------------------------------------------------
 

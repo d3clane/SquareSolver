@@ -60,7 +60,7 @@ const int MAX_MY_FILE_NAME = 64;
 
 /// \brief Contains info about errors - File with error, line with error, error code. 
 /// \warning Have to be updated with UpdateError() only
-struct ErrorInfo_t {
+struct ErrorInfoType {
     Errors error; ///< error code
     char fileWithError[MAX_MY_FILE_NAME]; ///< __FILE__ (file name with error)
     int lineWithError; ///< __LINE__ (line with error)
@@ -68,7 +68,7 @@ struct ErrorInfo_t {
 
 /// \brief global errorInfo constant with error info
 /// \warning this variable have to be changes only with UpdateError()
-extern ErrorInfo_t ErrorInfo;
+extern ErrorInfoType ErrorInfo;
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -78,12 +78,12 @@ extern ErrorInfo_t ErrorInfo;
 /// \details copyFileName copy of __FILE__ define at the moment macros is called 
 /// \details copyLineNumber __LINE__ define at the moment macros is valled
 /// \param [in] ERROR Errors enum with error occurred in program
-#define UpdateError(ERROR) {                   \
-    strcpy(ErrorInfo.fileWithError, __FILE__); \
-    ErrorInfo.lineWithError = __LINE__;        \
-    ErrorInfo.error = ERROR;                   \
+#define UpdateError(ERROR) {                                          \
+        strncpy(ErrorInfo.fileWithError, __FILE__, MAX_MY_FILE_NAME); \
+        ErrorInfo.lineWithError = __LINE__;                           \
+        ErrorInfo.error = ERROR;                                      \
     }
-
+    
 #else
 
 /// \brief updates only error code without debug info

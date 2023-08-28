@@ -7,7 +7,6 @@
 
 int main(int argc, const char *argv[]) {
     //setbuf(stdout, NULL);
-
     unsigned int commandLineFlags = ReadCommandLineFlags(argc, argv);
 
 #ifndef NDEBUG

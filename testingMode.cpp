@@ -13,7 +13,6 @@ const char *const FILE_MODE = "r";
 
 Errors Testing() {
     FILE *fp = fopen(FILE_NAME, FILE_MODE);
-
     if (!fp) {
         UpdateError(Errors::FILE_OPENING_ERROR);
         return      Errors::FILE_OPENING_ERROR;
@@ -32,7 +31,6 @@ Errors Testing() {
         int numberOfSuccessfullyReadValues = fscanf(fp, "NUM %d COEFF %lf %lf %lf ROOTS %lf %lf\n", 
                                                     &numberOfRoots, &a, &b, &c, &testX1, &testX2);
 
-        //printf("%d\n", numberOfSuccessfullyReadValues);
         if (numberOfSuccessfullyReadValues != HAVE_TO_READ_VALUES_AT_ONCE) 
             break;
         
@@ -46,7 +44,7 @@ Errors Testing() {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#define TEST_FAILED REDTEXT "Test %d failed:\nprogram result: "
+#define TEST_FAILED "Test %d failed:\nprogram result: "
 #define TEST_OK "Test %d: test is OK\n"
 
 Errors TestOneEquation(double a, double b, double c, 
@@ -65,23 +63,23 @@ Errors TestOneEquation(double a, double b, double c,
                                       (NumberOfRoots) numberOfRoots : INF_ROOTS;
 
     if (testNumberOfRoots != myNumberOfRoots) {
-        printf(REDTEXT "Test %d: number of roots do not match\n", testNumber);
-
-        printf("program expected %s, test has %s\n" STDTEXT,
-                ConvertEnumToString(myNumberOfRoots),
-                ConvertEnumToString(testNumberOfRoots));
+        PrintRedText("Test %d: number of roots do not match\n", testNumber);
+        
+        PrintRedText("program expected %s, test has %s\n" STDTEXT,
+                     ConvertEnumToString(myNumberOfRoots),
+                     ConvertEnumToString(testNumberOfRoots));
     } else {
         switch (myNumberOfRoots) {
             case ZERO_ROOTS:
-                printf(TEST_OK, testNumber);
+                PrintGreenText(TEST_OK, testNumber);
                 break;
 
             case ONE_ROOT:
                 if (Compare(testX1, myX1) == EQUAL) {
-                    printf(TEST_OK, testNumber);
+                    PrintGreenText(TEST_OK, testNumber);
                 } else {
-                    printf(TEST_FAILED "%lf  test value: %lf\n" STDTEXT,
-                            testNumber, myX1, testX1);
+                    PrintRedText(TEST_FAILED "%lf  test value: %lf\n",
+                                 testNumber, myX1, testX1);
                 }
 
                 break;
@@ -91,16 +89,16 @@ Errors TestOneEquation(double a, double b, double c,
                     Swap((void *) &testX1, (void *) &testX2, sizeof(testX1)); // testX1 <= testX2
 
                 if (Compare(testX1, myX1) == EQUAL && Compare(testX2, myX2) == EQUAL) {
-                    printf(TEST_OK, testNumber);
+                    PrintGreenText(TEST_OK, testNumber);
                 } else {
-                    printf(TEST_FAILED "%lf and %lf  test values: %lf and %lf\n" STDTEXT,
-                            testNumber, myX1, myX2, testX1, testX2);
-                }
+                    PrintRedText(TEST_FAILED "%lf and %lf  test values: %lf and %lf\n",
+                                 testNumber, myX1, myX2, testX1, testX2);
+                } 
 
                 break;
 
             case INF_ROOTS:
-                printf(TEST_OK, testNumber);
+                PrintGreenText(TEST_OK, testNumber);
                 break;
 
             default:
@@ -110,7 +108,7 @@ Errors TestOneEquation(double a, double b, double c,
     }
 
     UpdateError(Errors::NO_ERRORS);
-    return Errors::NO_ERRORS;    
+    return      Errors::NO_ERRORS;    
 }
 
 #undef TEST_OK

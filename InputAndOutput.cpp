@@ -28,40 +28,40 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-const static CommandLineFlags_t FILE_FLAG           = {.short_flag = "-f", .long_flag = "--file",
-                                                       .Help = PrintFileHelp,};
+const static CommandLineFlagsType FILE_FLAG           = {.short_flag = "-f", .long_flag = "--file",
+                                                         .Help = PrintFileHelp,};
 
-const static CommandLineFlags_t COMMAND_LINE_FLAG   = {.short_flag = "-c", .long_flag = "--cmd",
-                                                       .Help = PrintCommandLineHelp,};
+const static CommandLineFlagsType COMMAND_LINE_FLAG   = {.short_flag = "-c", .long_flag = "--cmd",
+                                                         .Help = PrintCommandLineHelp,};
 
-const static CommandLineFlags_t STDIN_FLAG          = {.short_flag = "-s", .long_flag = "--stdin",
-                                                       .Help = PrintStdinHelp,};
+const static CommandLineFlagsType STDIN_FLAG          = {.short_flag = "-s", .long_flag = "--stdin",
+                                                         .Help = PrintStdinHelp,};
 
 #ifndef NDEBUG
-const static CommandLineFlags_t TEST_MODE_FLAG      = {.short_flag = "-t", .long_flag = "--test",
-                                                       .Help = PrintTestHelp,};
+const static CommandLineFlagsType TEST_MODE_FLAG      = {.short_flag = "-t", .long_flag = "--test",
+                                                         .Help = PrintTestHelp,};
 #endif
 
-const static CommandLineFlags_t EQUATION_INPUT_FLAG = {.short_flag = "-eq", .long_flag = "--equation",
-                                                       .Help = PrintEquationHelp,};          
+const static CommandLineFlagsType EQUATION_INPUT_FLAG = {.short_flag = "-eq", .long_flag = "--equation",
+                                                         .Help = PrintEquationHelp,};          
                                                                                                                                                                                      
-const static CommandLineFlags_t HELP_FLAG           = {.short_flag = "-h", .long_flag = "--help",
-                                                       .Help = PrintHelpFuncHelp,};
+const static CommandLineFlagsType HELP_FLAG           = {.short_flag = "-h", .long_flag = "--help",
+                                                         .Help = PrintHelpFuncHelp,};
 
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief array with command line flags
 #ifndef DEBUG
-const static CommandLineFlags_t commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_FLAG, STDIN_FLAG, 
-                                                                  FILE_FLAG, 
-                                                                  EQUATION_INPUT_FLAG,
-                                                                  HELP_FLAG,
-                                                                  TEST_MODE_FLAG,};
+const static CommandLineFlagsType commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_FLAG, STDIN_FLAG, 
+                                                                    FILE_FLAG, 
+                                                                    EQUATION_INPUT_FLAG,
+                                                                    HELP_FLAG,
+                                                                    TEST_MODE_FLAG,};
 #else
-const static CommandLineFlags_t commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_FLAG, STDIN_FLAG,
-                                                                  FILE_FLAG,
-                                                                  EQUATION_INPUT_FLAG,
-                                                                  HELP_FLAG,};
+const static CommandLineFlagsType commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_FLAG, STDIN_FLAG,
+                                                                    FILE_FLAG,
+                                                                    EQUATION_INPUT_FLAG,
+                                                                    HELP_FLAG,};
 #endif          
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -69,37 +69,37 @@ const static CommandLineFlags_t commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_F
 /// \brief array converts enum ReadingID to enum FlagsIdInArray
 /// \attention all enums ReadingId have to be different and less than MAX_FUNC_NUMBER
 const int convertReadingId[MAX_FUNC_NUMBER] = {
-    [TypesReadFuncs_t::FILE]  = (int) FlagsIdInArray::FILE_FLAG,
-    [TypesReadFuncs_t::STDIN] = (int) FlagsIdInArray::STDIN_FLAG, 
-    [TypesReadFuncs_t::CMD]   = (int) FlagsIdInArray::COMMAND_LINE_FLAG,
+    [TypesReadFuncsType::FILE]  = (int) FlagsIdInArray::FILE_FLAG,
+    [TypesReadFuncsType::STDIN] = (int) FlagsIdInArray::STDIN_FLAG, 
+    [TypesReadFuncsType::CMD]   = (int) FlagsIdInArray::COMMAND_LINE_FLAG,
 };
 
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief funcs that can be used with -eq flag
-const TypesReadFuncs_t EquationReadingFuncs = {
+const TypesReadFuncsType EquationReadingFuncs = {
     .flagFuncs = {
-        [TypesReadFuncs_t::FILE]  = ReadEquationCoeffsFromFile,
-        [TypesReadFuncs_t::STDIN] = ReadEquationCoeffsFromStdin,
-        [TypesReadFuncs_t::CMD]   = ReadEquationCoeffsFromCommandLine,
+        [TypesReadFuncsType::FILE]  = ReadEquationCoeffsFromFile,
+        [TypesReadFuncsType::STDIN] = ReadEquationCoeffsFromStdin,
+        [TypesReadFuncsType::CMD]   = ReadEquationCoeffsFromCommandLine,
         }
 };
 
 /// \brief funcs that can be used with no input type flag                                                
-const TypesReadFuncs_t CoeffsReadingFuncs   = {
+const TypesReadFuncsType CoeffsReadingFuncs   = {
     .flagFuncs = {
-        [TypesReadFuncs_t::FILE]  = ReadCoeffsFromFile,
-        [TypesReadFuncs_t::STDIN] = ReadCoeffsFromStdin,
-        [TypesReadFuncs_t::CMD]   = ReadCoeffsFromCommandLine,
+        [TypesReadFuncsType::FILE]  = ReadCoeffsFromFile,
+        [TypesReadFuncsType::STDIN] = ReadCoeffsFromStdin,
+        [TypesReadFuncsType::CMD]   = ReadCoeffsFromCommandLine,
         }
 };
 
 /// \brief funcs that can be used with file reading input type
-const TypesReadFuncs_t FileReadingFuncs     = {
+const TypesReadFuncsType FileReadingFuncs     = {
     .flagFuncs = {
-        [TypesReadFuncs_t::FILE]  = nullptr,
-        [TypesReadFuncs_t::STDIN] = ReadFileNameFromStdin,
-        [TypesReadFuncs_t::CMD]   = ReadFileNameFromCommandLine,
+        [TypesReadFuncsType::FILE]  = nullptr,
+        [TypesReadFuncsType::STDIN] = ReadFileNameFromStdin,
+        [TypesReadFuncsType::CMD]   = ReadFileNameFromCommandLine,
         }
 };                                              
 
@@ -128,10 +128,37 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
 
         DeleteFlag(&flagsActivated, (int) FlagsIdInArray::FILE_FLAG);
         
-        inputError = CallFlagFunc(flagsActivated, 
-                                  a, b, c, argc, argv, 
-                                  fileName, FILE_NAME_LENGTH, nullptr, 
-                                  &FileReadingFuncs);
+        for (size_t funcPos = 0; funcPos < MAX_FUNC_NUMBER; ++funcPos) {
+
+            if (GetFlag(flagsActivated, convertReadingId[funcPos])) {
+
+                if ((FileReadingFuncs.flagFuncs)[funcPos]) {
+                    if (funcPos == (int) TypesReadFuncsType::STDIN) {
+
+                        FileNameParams params = {
+                            .name = fileName,
+                            .size = FILE_NAME_LENGTH,
+                        };
+
+                        inputError = (FileReadingFuncs.flagFuncs)[funcPos](&params);
+                    } else {
+                        
+                        ReadFileNameFromCmdParams params = {
+                            .fileName = {
+                                .name = fileName,
+                                .size = FILE_NAME_LENGTH,
+                            },
+                            .argc = argc,
+                            .argv = argv,
+                        };
+
+                        inputError = (FileReadingFuncs.flagFuncs)[funcPos](&params);
+                    }
+                }
+                
+                break;
+            }
+        }
 
         if (inputError != Errors::NO_ERRORS) return inputError;
 
@@ -147,12 +174,12 @@ Errors ReadInput(const int argc, const char *argv[], double *a, double *b, doubl
     if (GetFlag(flagsActivated, (int) FlagsIdInArray::EQUATION_INPUT_FLAG)) {
         inputError = CallFlagFunc(flagsActivated, 
                                   a, b, c, argc, argv, 
-                                  nullptr, 0, fp, 
+                                  fp, 
                                   &EquationReadingFuncs);        
     } else {
         inputError = CallFlagFunc(flagsActivated, 
                                   a, b, c, argc, argv, 
-                                  nullptr, 0, fp, 
+                                  fp, 
                                   &CoeffsReadingFuncs);
     }
 
@@ -184,28 +211,28 @@ unsigned int ReadCommandLineFlags(const int argc, const char *argv[]) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadCoeffsFromCommandLine(double *a, double *b, double *c,
-                                 const int argc, const char *argv[],
-                                 char *name, const size_t size,
-                                 FILE *fp) {
+Errors ReadCoeffsFromCommandLine(void *storage) {
+    assert(storage);
 
-    assert(a);
-    assert(b);
-    assert(c);
-    assert(argv);
+    ReadFromCmdParams *const params = (ReadFromCmdParams *) storage;
+
+    assert(params->argv);
+    assert(params->coeffsPtrs.a);
+    assert(params->coeffsPtrs.b);
+    assert(params->coeffsPtrs.c);
 
     Errors readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
-    for (int i = 0; i < argc - 3; ++i) { // till (argc - 3) because also reading (i + 3)
-        if (CompareWithFlag(argv[i], 
+    for (int i = 0; i < params->argc - 3; ++i) { // till (argc - 3) because also reading (i + 3)
+        if (CompareWithFlag(params->argv[i], 
                             commandLineFlags + (int) FlagsIdInArray::COMMAND_LINE_FLAG) == 0) {
             readError = Errors::NO_ERRORS;
             char tmpchar = 0;
 
-            if (sscanf(argv[i + 1], "%lf%c", a, &tmpchar) != 1)
+            if (sscanf(params->argv[i + 1], "%lf%c", params->coeffsPtrs.a, &tmpchar) != 1)
                 readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
-            if (sscanf(argv[i + 2], "%lf%c", b, &tmpchar) != 1) 
+            if (sscanf(params->argv[i + 2], "%lf%c", params->coeffsPtrs.b, &tmpchar) != 1) 
                 readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
-            if (sscanf(argv[i + 3], "%lf%c", c, &tmpchar) != 1) 
+            if (sscanf(params->argv[i + 3], "%lf%c", params->coeffsPtrs.c, &tmpchar) != 1) 
                 readError = Errors::READING_COEFFS_FROM_COMMAND_LINE_ERROR;
 
             break;
@@ -217,7 +244,9 @@ Errors ReadCoeffsFromCommandLine(double *a, double *b, double *c,
         return readError;
     }
     
-    readError = CheckCoeffsIsFinite(*a, *b, *c);
+    readError = CheckCoeffsIsFinite(*(params->coeffsPtrs.a),        
+                                    *(params->coeffsPtrs.b), 
+                                    *(params->coeffsPtrs.c));
 
     if (readError != Errors::NO_ERRORS)
         UpdateError(readError);
@@ -227,27 +256,30 @@ Errors ReadCoeffsFromCommandLine(double *a, double *b, double *c,
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadEquationCoeffsFromCommandLine(double *a, double *b, double *c,
-                                         const int argc, const char *argv[],
-                                         char *name, const size_t size,
-                                         FILE *fp) {
-    assert(a);
-    assert(b);
-    assert(c);
-    assert(argv);                                            
+Errors ReadEquationCoeffsFromCommandLine(void *storage) {
+    assert(storage);
+
+    ReadFromCmdParams *const params = (ReadFromCmdParams *) storage;
+
+    assert(params->argv);   
+    assert(params->coeffsPtrs.a);
+    assert(params->coeffsPtrs.b);
+    assert(params->coeffsPtrs.c);                                      
 
     Errors readError = Errors::READING_EQUATION_FROM_COMMAND_LINE_ERROR;
 
-    for (int i = 0; i < argc - 1; ++i) { // till (argc - 3) cause also reading (i + 3)
-        if (CompareWithFlag(argv[i], 
+    for (int i = 0; i < params->argc - 1; ++i) { // till (argc - 3) cause also reading (i + 3)
+        if (CompareWithFlag(params->argv[i], 
                             commandLineFlags + (int) FlagsIdInArray::EQUATION_INPUT_FLAG) == 0) {
             
-            if (strlen(argv[i + 1]) + 1 >= MAX_EQUATION_SIZE) { //TODO check >= or > 
+            if (strlen(params->argv[i + 1]) + 1 >= MAX_EQUATION_SIZE) { //TODO check >= or > 
                 UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
                 return      Errors::EXTRA_SYMBOLS_IN_LINE;
             }
-            printf("%s\n", argv[i + 1]);
-            readError = ParseQuadraticEquation(argv[i + 1], a, b, c);
+            printf("%s\n", params->argv[i + 1]);
+            readError = ParseQuadraticEquation(params->argv[i + 1], params->coeffsPtrs.a,
+                                                                    params->coeffsPtrs.b, 
+                                                                    params->coeffsPtrs.c);
 
             break;
         }
@@ -259,7 +291,9 @@ Errors ReadEquationCoeffsFromCommandLine(double *a, double *b, double *c,
     if (readError != Errors::NO_ERRORS) 
         return readError;
     
-    readError = CheckCoeffsIsFinite(*a, *b, *c);
+    readError = CheckCoeffsIsFinite(*(params->coeffsPtrs.a), 
+                                    *(params->coeffsPtrs.b), 
+                                    *(params->coeffsPtrs.c));
 
     UpdateError(readError);
 
@@ -268,28 +302,28 @@ Errors ReadEquationCoeffsFromCommandLine(double *a, double *b, double *c,
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadFileNameFromCommandLine(double *a, double *b, double *c,
-                                   const int argc, const char *argv[],
-                                   char *name, const size_t size,
-                                   FILE *fp) {
+Errors ReadFileNameFromCommandLine(void *storage) {
+    assert(storage);
 
-    assert(name);
-    assert(argv);
+    ReadFileNameFromCmdParams *const params = (ReadFileNameFromCmdParams *) storage;
+
+    assert(params->argv);
+    assert(params->fileName.name);
 
     Errors readError = Errors::READING_FILE_NAME_FROM_COMMAND_LINE_ERROR;
 
-    for (int i = 0; i < argc - 1; ++i) {
-        if (CompareWithFlag(argv[i],
+    for (int i = 0; i < params->argc - 1; ++i) {
+        if (CompareWithFlag(params->argv[i],
                             commandLineFlags + (int) FlagsIdInArray::FILE_FLAG) == 0) {
             readError = Errors::NO_ERRORS;
-            strncpy(name, argv[i + 1], size - 1);
+            strncpy(params->fileName.name, params->argv[i + 1], params->fileName.size - 1);
 
-            if (strlen(argv[i + 1]) > size - 1) {
+            if (strlen(params->argv[i + 1]) > params->fileName.size - 1) {
                 UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
                 return      Errors::EXTRA_SYMBOLS_IN_LINE;
             }
             
-            name[size - 1] = '\0';
+            params->fileName.name[params->fileName.size - 1] = '\0';
             break;
         }
     }
@@ -301,13 +335,14 @@ Errors ReadFileNameFromCommandLine(double *a, double *b, double *c,
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadCoeffsFromStdin(double *a, double *b, double *c,
-                           const int argc, const char *argv[],
-                           char *name, const size_t size,
-                           FILE *fp) {
-    assert(a);
-    assert(b);
-    assert(c);
+Errors ReadCoeffsFromStdin(void *storage) {
+    assert(storage);
+
+    CoeffsPtrs *const params = (CoeffsPtrs *) storage;
+
+    assert(params->a);
+    assert(params->b);
+    assert(params->c);
 
     static const int NUMBER_OF_READ_VALUES = 3;
 
@@ -316,7 +351,9 @@ Errors ReadCoeffsFromStdin(double *a, double *b, double *c,
     int scannedVals = 0;
     while (true) {
         quitInput = MenuInputCoeffs();
-        scannedVals = fscanf(stdin, "%lf %lf %lf", a, b, c);
+        scannedVals = fscanf(stdin, "%lf %lf %lf", params->a, 
+                                                   params->b, 
+                                                   params->c);
 
         if (quitInput != Errors::NO_ERRORS) break;
         if (SkipSymbols(stdin) == 0) {
@@ -337,7 +374,7 @@ Errors ReadCoeffsFromStdin(double *a, double *b, double *c,
     if (quitInput != Errors::NO_ERRORS) 
         return quitInput;
 
-    Errors error = CheckCoeffsIsFinite(*a, *b, *c);
+    Errors error = CheckCoeffsIsFinite(*(params->a), *(params->b), *(params->c));
 
     UpdateError(error);
 
@@ -346,13 +383,14 @@ Errors ReadCoeffsFromStdin(double *a, double *b, double *c,
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c,
-                                   const int argc, const char *argv[],
-                                   char *name, const size_t size,
-                                   FILE *fp) {
-    assert(a);
-    assert(b);
-    assert(c);
+Errors ReadEquationCoeffsFromStdin(void *storage) {
+    assert(storage);
+
+    CoeffsPtrs *const params = (CoeffsPtrs *) storage;
+
+    assert(params->a);
+    assert(params->b);
+    assert(params->c);
 
     static char equation[MAX_EQUATION_SIZE] = "";
 
@@ -367,12 +405,13 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c,
 
         if (HasReadAllStringWithFgets(equation, MAX_EQUATION_SIZE, stdin)) {
             if (quitInput == Errors::QUIT_THE_PROGRAM_WITHOUT_INPUT || 
-                ParseQuadraticEquation(equation, a, b, c) == Errors::NO_ERRORS) {
+                ParseQuadraticEquation(equation, params->a, 
+                                                 params->b, 
+                                                 params->c) == Errors::NO_ERRORS) {                                  
                 break;
             }
-        } else {
+        } else
             printf("Equation is too long\n");
-        }
 
         printf("Not valid input\n");
     }
@@ -380,7 +419,7 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c,
     if (quitInput != Errors::NO_ERRORS) 
         return quitInput;
 
-    Errors error = CheckCoeffsIsFinite(*a, *b, *c);
+    Errors error = CheckCoeffsIsFinite(*(params->a), *(params->b), *(params->c));
 
     UpdateError(error);
 
@@ -389,22 +428,24 @@ Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c,
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadFileNameFromStdin(double *a, double *b, double *c,
-                             const int argc, const char *argv[],
-                             char *name, const size_t size,
-                             FILE *fp) {
-    assert(name);
+Errors ReadFileNameFromStdin(void *storage) {
+    assert(storage);
+    
+    FileNameParams *const params = (FileNameParams *) storage;
 
-    printf("Print file name with the length less than %zu (or EOF to quit): \n", size);
+    assert(params->name);
+    assert(params->size > 0);
 
-    Errors readError = Fgets_s(name, size, stdin);
+    printf("Print file name with the length less than %zu (or EOF to quit): \n", params->size);
+
+    Errors readError = Fgets_s(params->name, params->size, stdin);
 
     if (readError == Errors::READING_FROM_STDIN_ERROR) {
         UpdateError( Errors::READING_FILE_NAME_FROM_STDIN_ERROR);
         return       Errors::READING_FILE_NAME_FROM_STDIN_ERROR;
     }
 
-    if (!HasReadAllStringWithFgets(name, size, stdin)) {
+    if (!HasReadAllStringWithFgets(params->name, params->size, stdin)) {
         UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
         return      Errors::EXTRA_SYMBOLS_IN_LINE;
     }
@@ -414,23 +455,27 @@ Errors ReadFileNameFromStdin(double *a, double *b, double *c,
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadCoeffsFromFile(double *a, double *b, double *c,
-                          const int argc, const char *argv[],
-                          char *name, const size_t size,
-                          FILE *fp) {
-    assert(a);
-    assert(b);
-    assert(c);
+Errors ReadCoeffsFromFile(void *storage) {
+    assert(storage);
+
+    ReadCoeffsFromFileParams *const params = (ReadCoeffsFromFileParams *) storage;
+
+    assert(params->coeffs.a);
+    assert(params->coeffs.b);
+    assert(params->coeffs.c);
+    assert(params->fp);
 
     static const int NUMBER_OF_READ_VALUES = 3;
 
     Errors error = Errors::NO_ERRORS;
     
-    if (fscanf(fp, "%lf %lf %lf", a, b, c) != NUMBER_OF_READ_VALUES) {
+    if (fscanf(params->fp, "%lf %lf %lf", params->coeffs.a, 
+                                          params->coeffs.b, 
+                                          params->coeffs.c) != NUMBER_OF_READ_VALUES) {
         UpdateError(Errors::READING_COEFFS_FROM_FILE_ERROR);
         return      Errors::READING_COEFFS_FROM_FILE_ERROR;
     }
-    if (SkipSymbols(fp) != 0) {
+    if (SkipSymbols(params->fp) != 0) {
         UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
         return      Errors::EXTRA_SYMBOLS_IN_LINE;
     }
@@ -438,7 +483,9 @@ Errors ReadCoeffsFromFile(double *a, double *b, double *c,
     if (error != Errors::NO_ERRORS) 
         return error;
     
-    error = CheckCoeffsIsFinite(*a, *b, *c);
+    error = CheckCoeffsIsFinite(*(params->coeffs.a), 
+                                *(params->coeffs.b), 
+                                *(params->coeffs.c));
 
     UpdateError(error);
 
@@ -447,30 +494,33 @@ Errors ReadCoeffsFromFile(double *a, double *b, double *c,
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c,
-                                  const int argc, const char *argv[],
-                                  char *name, const size_t size,
-                                  FILE *fp) {
-    assert(a);
-    assert(b);
-    assert(c);
-    assert(fp);
+Errors ReadEquationCoeffsFromFile(void *storage) {
+    assert(storage);
+
+    ReadCoeffsFromFileParams *const params = (ReadCoeffsFromFileParams *) storage;
+
+    assert(params->coeffs.a);
+    assert(params->coeffs.b);
+    assert(params->coeffs.c);
+    assert(params->fp);
 
     static char equation[MAX_EQUATION_SIZE] = "";
 
-    Errors error = Fgets_s(equation, MAX_EQUATION_SIZE, fp);
+    Errors error = Fgets_s(equation, MAX_EQUATION_SIZE, params->fp);
 
     if (error ==    Errors::READING_FROM_STDIN_ERROR) {
         UpdateError(Errors::READING_EQUATION_FROM_FILE_ERROR);
         return      Errors::READING_EQUATION_FROM_FILE_ERROR;
     }
     
-    if (!HasReadAllStringWithFgets(equation, MAX_EQUATION_SIZE, fp)) {
+    if (!HasReadAllStringWithFgets(equation, MAX_EQUATION_SIZE, params->fp)) {
         UpdateError(Errors::EXTRA_SYMBOLS_IN_LINE);
         return      Errors::EXTRA_SYMBOLS_IN_LINE;
     }
 
-    return ParseQuadraticEquation(equation, a, b, c);
+    return ParseQuadraticEquation(equation, params->coeffs.a, 
+                                            params->coeffs.b, 
+                                            params->coeffs.c);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -712,7 +762,7 @@ bool HasReadAllStringWithFgets(const char *str, const size_t size, FILE *fp) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-int CompareWithFlag(const char *str, const CommandLineFlags_t *flags) {
+int CompareWithFlag(const char *str, const CommandLineFlagsType *flags) {
     return strcmp(str, flags->short_flag) &&
            strcmp(str, flags->long_flag);
 }
@@ -743,19 +793,53 @@ void AddFlag(unsigned int *flagsActivated, int flagID) {
 Errors CallFlagFunc(unsigned int flagsActivated,
                     double *a, double *b, double *c,
                     const int argc, const char *argv[],
-                    char *name, const size_t size, FILE *fp, 
-                    const TypesReadFuncs_t *Funcs) {
+                    FILE *fp, 
+                    const TypesReadFuncsType *Funcs) {
     
     for (size_t funcPos = 0; funcPos < MAX_FUNC_NUMBER; ++funcPos) {
 
             if (GetFlag(flagsActivated, convertReadingId[funcPos])) {
-                if ((Funcs->flagFuncs)[funcPos])
-                    return (Funcs->flagFuncs)[funcPos](a, b, c, argc, argv, 
-                                                     name, size, fp);
+                if (funcPos == TypesReadFuncsType::FILE) {
+                    ReadCoeffsFromFileParams params = {
+                        .coeffs = {
+                            .a = a,
+                            .b = b,
+                            .c = c,
+                        },
+                        .fp = fp,
+                    };
+
+                    return (Funcs->flagFuncs)[funcPos](&params);
+                } 
+
+                if (funcPos == TypesReadFuncsType::STDIN) {
+                    CoeffsPtrs params = {
+                        .a = a,
+                        .b = b,
+                        .c = c,
+                    };
+
+                    return (Funcs->flagFuncs)[funcPos](&params);
+                } 
+
+                if (funcPos == TypesReadFuncsType::CMD) {
+                    ReadFromCmdParams params = {
+                        .coeffsPtrs = {
+                            .a = a,
+                            .b = b,
+                            .c = c,
+                        },
+                    
+                        .argc = argc,
+                        .argv = argv,
+                    };
+
+                    return (Funcs->flagFuncs)[funcPos](&params);
+                }
                 
                 break;
             }
-        }
+    }
 
     UpdateError(Errors::UNKNOWN_COMMAND_LINE_FLAG);
     return      Errors::UNKNOWN_COMMAND_LINE_FLAG;

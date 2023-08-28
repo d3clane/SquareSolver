@@ -6,13 +6,13 @@
 
 #ifndef NDEBUG
     #define PrintError(X) fprintf(stderr, REDTEXT X \
-                          "\nError occured in file %s in line %d\n", \
-                          ErrorInfo.fileWithError, ErrorInfo.lineWithError)
+                                  "\nError occured in file %s in line %d\n", \
+                                  ErrorInfo.fileWithError, ErrorInfo.lineWithError)
 #else
     #define PrintError(X) fprintf(stderr, REDTEXT X);
 #endif
 
-ErrorInfo_t ErrorInfo = {.error = Errors::NO_ERRORS, .fileWithError = "aboba", .lineWithError = -1};
+ErrorInfoType ErrorInfo = {.error = Errors::NO_ERRORS, .fileWithError = "aboba", .lineWithError = -1};
 
 //---------------------------------------------------------------------------------------------------------------------
 

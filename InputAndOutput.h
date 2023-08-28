@@ -34,7 +34,7 @@ static const size_t FLAGS_NUMBER = 5;
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief Contains short and long names of command line flags. Also contains pointer to the flag Help
-struct CommandLineFlags_t {
+struct CommandLineFlagsType {
     char short_flag[SHORT_FLAG_LENGTH]; ///< short naming of the flag
     char long_flag[LONG_FLAG_LENGTH];   ///< long naming of the flag
 
@@ -48,20 +48,17 @@ static const int MAX_FUNC_NUMBER = 3;
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief Contains functions to call for every reading type flag
-struct TypesReadFuncs_t {
-    typedef Errors (*FlagFunc)(double *a, double *b, double *c,
-                               const int argc, const char *argv[],
-                               char *name, const size_t size,
-                               FILE *fp);
+struct TypesReadFuncsType {
+    typedef Errors (*FlagFunc)(void *storage);
 
-    FlagFunc flagFuncs[MAX_FUNC_NUMBER]; ///< functions that can be used with this flag
-    
     /// \brief IDs in flagFuncs array for every input type
     enum ReadingId {
         FILE  = 0,
         STDIN = 1,
         CMD   = 2,
     };
+
+    FlagFunc flagFuncs[MAX_FUNC_NUMBER]; ///< functions that can be used with this flag
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -73,10 +70,46 @@ enum class FlagsIdInArray {
     FILE_FLAG           = 2,
     EQUATION_INPUT_FLAG = 3,
     HELP_FLAG           = 4,
+
 #ifndef NDEBUG
     TEST_MODE_FLAG      = 5,
 #endif
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+
+/// \brief Contains pointers on quadratic coefficients
+struct CoeffsPtrs {
+    double *const a, *const b, *const c;
+};
+
+/// \brief Conttains pointer on storage for file name and size of this storage
+struct FileNameParams {
+    char *name;
+    const size_t size;
+};
+
+/// \brief Contains pointers on quadratic coeffs and command line info (argc, argv)
+struct ReadFromCmdParams {
+    const CoeffsPtrs coeffsPtrs;
     
+    const int argc;
+    const char *const *argv;
+};
+
+/// \brief Contains pointers on quadratic coeffs and file pointer
+struct ReadCoeffsFromFileParams {
+    const CoeffsPtrs coeffs;
+    
+    FILE *fp;
+};
+
+/// \brief Contains file name info and command line info (argc, argv)
+struct ReadFileNameFromCmdParams {
+    FileNameParams fileName;
+
+    const int argc;
+    const char *const *argv;
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -86,7 +119,7 @@ enum class FlagsIdInArray {
 /// \param [in] str string to compare
 /// \param [in] flags flags to compare with
 /// \returns 0 if they are equal otherwise not 0
-int CompareWithFlag(const char *str, const CommandLineFlags_t *flags);
+int CompareWithFlag(const char *str, const CommandLineFlagsType *flags);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -112,54 +145,46 @@ unsigned int ReadCommandLineFlags(const int argc, const char *argv[]);
 //---------------------------------------------------------------------------------------------------------------------
 /// \brief scans coefficients for quadratic equation ax^2 + bx + c from standard input
 ///
+/// \details Works with CoeffsPtrs structure with params: 
 /// \param [out] a pointer to the storage for a coefficient
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful or not 0 if the user decided to quit the input
-Errors ReadCoeffsFromStdin(double *a, double *b, double *c,
-                           const int argc, const char *argv[],
-                           char *name, const size_t size,
-                           FILE *fp);
+Errors ReadCoeffsFromStdin(void *storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief read coefficients for quadratic equation ax^2 + bx + c from file
 ///
+/// \details Works with ReadCoeffsFromFileParams structure with params: 
 /// \param [out] a pointer to the storage for a coefficient
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \param [in] fp pointer to the FILE
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadCoeffsFromFile(double *a, double *b, double *c,
-                          const int argc, const char *argv[],
-                          char *name, const size_t size,
-                          FILE *fp);
+Errors ReadCoeffsFromFile(void *storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief read file name from standard input
 ///
+/// \details Works with FileNameParams structure with params:
 /// \param [out] name storage for file name
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadFileNameFromStdin(double *a, double *b, double *c,
-                            const int argc, const char *argv[],
-                            char *name, const size_t size,
-                            FILE *fp);
+Errors ReadFileNameFromStdin(void *storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief read file name from command line
 ///
+/// \details Works with ReadFileNameFromCmdParams structure with params:
 /// \param [in] argc number of arguments in argv
 /// \param [in] argv command line arguments
 /// \param [out] name storage for file name
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadFileNameFromCommandLine(double *a, double *b, double *c,
-                                   const int argc, const char *argv[],
-                                   char *name, const size_t size,
-                                   FILE *fp);
+Errors ReadFileNameFromCommandLine(void *storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -176,61 +201,53 @@ Errors PrintRoots(const NumberOfRoots numberOfRoots, const double x1, const doub
 /// \brief reads coefficients from the command line
 ///
 /// \details Read from command line only in case flag "-c" is specified right before the coefficients
+/// \details Works with ReadFromCmdParams structure with params:
 /// \param [in] argc number of values in argv
 /// \param [in] argv parameters from the command line
 /// \param [out] a pointer to the storage for a coefficient
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadCoeffsFromCommandLine(double *a, double *b, double *c,
-                                 const int argc, const char *argv[],
-                                 char *name, const size_t size,
-                                 FILE *fp);
+Errors ReadCoeffsFromCommandLine(void *storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief reads equation from command line and converts to coefficients
 ///
 /// \details equation format: 5x^2 + 3x - 1 = 7x + 2
+/// \details Works with ReadFromCmdParams structure with params:
 /// \param [in] argc number of argv values
 /// \param [in] argv command line arguments
 /// \param [out] a  quadratic coefficient
 /// \param [out] b  linear coefficient
 /// \param [out] c  free coefficient
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadEquationCoeffsFromCommandLine(double *a, double *b, double *c,
-                                         const int argc, const char *argv[],
-                                         char *name, const size_t size,
-                                         FILE *fp);
+Errors ReadEquationCoeffsFromCommandLine(void *storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief read equation from stdin and converts to coefficients
 ///
 /// \details equation format: 5x^2 + 3x - 1 = 7x + 2
+/// \details Works with CoeffsPtrs structure with params:
 /// \param [out] a  quadratic coefficient
 /// \param [out] b  linear coefficient
 /// \param [out] c  free coefficient
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadEquationCoeffsFromStdin(double *a, double *b, double *c,
-                                   const int argc, const char *argv[],
-                                   char *name, const size_t size,
-                                   FILE *fp);
+Errors ReadEquationCoeffsFromStdin(void *storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief read equation from file and converts to coefficients
 ///
 /// \details equation format: 5x^2 + 3x - 1 = 7x + 2
+/// \details Works with ReadCoeffsFromFileParams structure with params:
 /// \param [out] a  quadratic coefficient
 /// \param [out] b  linear coefficient
 /// \param [out] c  free coefficient
 /// \param [in] fp pointer to the FILE
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadEquationCoeffsFromFile(double *a, double *b, double *c,
-                                  const int argc, const char *argv[],
-                                  char *name, const size_t size,
-                                  FILE *fp);
+Errors ReadEquationCoeffsFromFile(void *storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -291,22 +308,22 @@ void AddFlag(unsigned int *flagsActivated, int flagID);
 /// 
 /// \details not all params have to be given. It's based on Funcs funcs. 
 /// \details Redunant params could be any values
-/// \param [in] flagsActivated active command line flags 
-/// \param [in] a quadratic coefficient
-/// \param [in] b linear coefficient
-/// \param [in] c free coefficient
-/// \param [in] argc number of values in argv
-/// \param [in] argv argv number of values
-/// \param [out] name storage to write file name
-/// \param [in] size size of name storage
-/// \param [in] fp file pointer with opened file
-/// \param [in] Funcs funcs to call
+/// \param [in]flagsActivated active command line flags 
+/// \param [in]a quadratic coefficient
+/// \param [in]b linear coefficient
+/// \param [in]c free coefficient
+/// \param [in]argc number of values in argv
+/// \param [in]argv argv number of values
+/// \param [out]name storage to write file name
+/// \param [in]size size of name storage
+/// \param [in]fp file pointer with opened file
+/// \param [in]Funcs funcs to call
 /// \return Funcs errors if they occurred, unknown flag error if no funcs called. Otherwise no errors
 Errors CallFlagFunc(unsigned int flagsActivated,
                     double *a, double *b, double *c,
                     const int argc, const char *argv[],
-                    char *name, const size_t size, FILE *fp,
-                    const TypesReadFuncs_t *Funcs);
+                    FILE *fp, 
+                    const TypesReadFuncsType *Funcs);
 
 //---------------------------------------------------------------------------------------------------------------------
 #endif // INPUT_AND_OUTPUT_H
