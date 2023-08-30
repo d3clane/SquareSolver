@@ -24,69 +24,59 @@ void Swap(void *aVoid, void *bVoid, const size_t size) {
     assert(aVoid != bVoid);
     assert(size > 0);
 
-    char *a = (char *) aVoid;
-    char *b = (char *) bVoid;
+    uint8_t *a = (uint8_t *) aVoid;
+    uint8_t *b = (uint8_t *) bVoid;
+
+    uint64_t *a_ll = (uint64_t *) a;
+    uint64_t *b_ll = (uint64_t *) b;
+    uint64_t tmp = 0;
+
+    assert(sizeof(uint64_t) == 8);
+
+    size_t sizeInQWords = size >> 3;    
     
-    unsigned long long *a_ll = (unsigned long long *)a;
-    unsigned long long *b_ll = (unsigned long long *)b;
-    unsigned long long tmp = 0;
-
-    size_t ullSize = sizeof(unsigned long long);
-
-    assert(ullSize == 8);
-
-    size_t pos = 0;    
-    
-    if (size >= 8) {
-
-        for (pos = 0; pos <= size - ullSize; 
-            pos += ullSize, ++a_ll, ++b_ll) {
-            memcpy(&tmp, a_ll, sizeof(tmp));
-                    memcpy(a_ll, b_ll, sizeof(*a_ll));
-                        memcpy(b_ll, &tmp, sizeof(*b_ll));
-        }
-
+    for (size_t i = 0; i < sizeInQWords; ++i) {
+        memcpy(&tmp, a_ll + i, sizeof(tmp));
+              memcpy(a_ll + i, b_ll + i, sizeof(*a_ll));
+                        memcpy(b_ll + i, &tmp, sizeof(*b_ll));
     }
 
-    a = (char *) a_ll;
-    b = (char *) b_ll;
+    a = (uint8_t *)(a_ll + sizeInQWords);
+    b = (uint8_t *)(b_ll + sizeInQWords);
 
-    if (size - pos >= 4) {
-        int32_t temp = 0;
+    if (size & 4) {
+        uint32_t temp = 0;
+
         assert(sizeof(temp) == 4);
 
         memcpy(&temp, a, sizeof(temp));
                memcpy(a, b, sizeof(temp));
                   memcpy(b, &temp, sizeof(temp));
         
-        pos += 4;
-        a += sizeof(int32_t);
-        b += sizeof(int32_t);
+        a += sizeof(uint32_t);
+        b += sizeof(uint32_t);
     }
 
-    if (size - pos >= 2) {
-        int16_t temp = 0;
+    if (size & 2) {
+        uint16_t temp = 0;
+
         assert(sizeof(temp) == 2);
 
         memcpy(&temp, a, sizeof(temp));
                memcpy(a, b, sizeof(temp));
                   memcpy(b, &temp, sizeof(temp));
 
-        pos += 2;
-        a += sizeof(int16_t);
-        b += sizeof(int16_t);
+        a += sizeof(uint16_t);
+        b += sizeof(uint16_t);
     }
 
-    if (size - pos >= 1) {
-        int8_t temp = 0;
+    if (size & 1) {
+        uint8_t temp = 0;
+        
         assert(sizeof(temp) == 1);
 
         memcpy(&temp, a, sizeof(temp));
                memcpy(a, b, sizeof(temp));
                   memcpy(b, &temp, sizeof(temp));
-
-        ++pos;
-        a += sizeof(int8_t);
-        b += sizeof(int8_t);
     }
 }

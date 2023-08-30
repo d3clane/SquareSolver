@@ -150,7 +150,9 @@ Errors TransposeEquation(char *equation) {
         equalPointer = endPointer;
     }
 
-    static char transposedEquation[2 * MAX_EQUATION_SIZE] = "";
+    static const int MAX_TRASPOSED_EQ_SIZE = 2 * MAX_EQUATION_SIZE;
+
+    static char transposedEquation[MAX_TRASPOSED_EQ_SIZE] = "";
 
     char *posInTransposed = transposedEquation;
     char *posInGivenEquation = equation;
@@ -176,7 +178,7 @@ Errors TransposeEquation(char *equation) {
 
     *posInTransposed = '\0';
 
-    strcpy(equation, transposedEquation);
+    strncpy(equation, transposedEquation, MAX_TRASPOSED_EQ_SIZE);
 
     UpdateError(Errors::NO_ERRORS);
     return      Errors::NO_ERRORS;

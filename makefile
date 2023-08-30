@@ -13,21 +13,22 @@ CXXFLAGS = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-l
 		   -flto-odr-type-merging -fno-omit-frame-pointer -Wlarger-than=8192 -Wstack-usage=8192 -pie \
 		   -fPIE -Werror=vla
 
-PROGRAMDIR = bin/build
+PROGRAMDIR = build/bin
 TARGET = quadraticSolver
-OBJECTDIR = bin/objects
+OBJECTDIR = build
 DOXYFILE = Others/Doxyfile
-# HEADERS = $(wildcard *.h)
-filesCpp = Doubles/DoubleFuncs.cpp Error/Errors.cpp InputOutput/InputAndOutput.cpp         \
-		   Parser/StringEquationFuncs.cpp Solver/Solver.cpp Strings/StringAndCharFuncs.cpp \
-		   Tester/TestingMode.cpp
+
+#filesCpp = Doubles/DoubleFuncs.cpp Error/Errors.cpp InputOutput/InputAndOutput.cpp         \
+#		   Parser/StringEquationFuncs.cpp Solver/Solver.cpp Strings/StringAndCharFuncs.cpp \
+#		   Tester/TestingMode.cpp
 
 filesCppNames = DoubleFuncs.cpp Errors.cpp InputAndOutput.cpp StringEquationFuncs.cpp Solver.cpp \
 				StringAndCharFuncs.cpp TestingMode.cpp main.cpp
 
 objects = $(filesCppNames:%.cpp=$(OBJECTDIR)/%.o)
 
-.PHONY: all
+.PHONY: all docs clean install
+
 all: $(PROGRAMDIR)/$(TARGET)
 
 $(PROGRAMDIR)/$(TARGET): $(objects) 
@@ -36,11 +37,11 @@ $(PROGRAMDIR)/$(TARGET): $(objects)
 $(OBJECTDIR)/%.o : %.cpp Errors.h Colors.h
 	$(CXX) -c $< -o $@ $(CXXFLAGS) 
 
-.PHONY: docs
 docs: 
-	@doxygen $(DOXYFILE)
+	doxygen $(DOXYFILE)
 
-.PHONY: clean
 clean:
 	rm -rf $(OBJECTDIR)/*.o
 
+install:
+	mkdir $(PROGRAMDIR)

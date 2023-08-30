@@ -18,13 +18,13 @@ int main(int argc, const char *argv[]) {
         return (int) Help(commandLineFlags);
     
     double a = NAN, b = NAN, c = NAN;
-    double x1 = NAN, x2 = NAN;
 
     Errors errors = ReadInput(argc, argv, &a, &b, &c);
 
     if (PrintErrors() != 0)
         return (int) errors;
 
+    double x1 = NAN, x2 = NAN;
     enum NumberOfRoots numberOfRoots = SolveQuadraticEquation(a, b, c, &x1, &x2);
 
     PrintRoots(numberOfRoots, x1, x2);

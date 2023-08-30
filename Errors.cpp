@@ -5,8 +5,7 @@
 #include "Errors.h"
 
 #ifndef NDEBUG
-    #define PrintError(X) fprintf(stderr, REDTEXT X \
-                                  "\nError occured in file %s in line %d\n", \
+    #define PrintError(X) fprintf(stderr, RedText(X "\nError occured in file %s in line %d\n"), \
                                   ErrorInfo.fileWithError, ErrorInfo.lineWithError)
 #else
     #define PrintError(X) fprintf(stderr, REDTEXT X);

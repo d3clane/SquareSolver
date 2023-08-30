@@ -1,3 +1,6 @@
+#ifndef COLORS_H
+#define COLORS_H
+
 /// \file
 /// \brief File contains console collors defines
 
@@ -21,19 +24,16 @@
 
 #define RedText(X)     REDTEXT X STDTEXT
 #define GreenText(X) GREENTEXT X STDTEXT
-#define ColorText(Color, X) Color X STDTEXT
+#define ColorText(COLOR, X) COLOR X STDTEXT
 
 #define SetRedConsole printf(REDCONSOLE)
 #define SetGreenConsole printf(GREENCONSOLE)
-#define SetColorConsole(Color) printf(Color)
+#define SetColorConsole(COLOR) printf(COLOR)
 #define SetStandardConsole printf(STDCONSOLE)
 
 #define PrintRedText(STRING_FORMATER, ...)   printf(REDTEXT STRING_FORMATER STDTEXT, __VA_ARGS__)
 #define PrintGreenText(STRING_FORMATER, ...) printf(GREENTEXT STRING_FORMATER STDTEXT, __VA_ARGS__)
-#define PrintColorText(Color, STRING_FORMATER, ...) printf(Color STRING_FORMATER STDTEXT, __VA_ARGS__)
+#define PrintColorText(COLOR, STRING_FORMATER, ...) printf(COLOR STRING_FORMATER STDTEXT, __VA_ARGS__)
+#define PrintOnlyColorText(COLOR, STRING) printf(COLOR STRING STDTEXT);
 
-// TODO: 1) color lib +
-//       2) swap +
-//       3) error and flag(struct + void*) +
-//       4) type naming + 
-//       5) make: +doxygen +objects +build 
+#endif // COLORS_H

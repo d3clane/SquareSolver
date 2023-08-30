@@ -28,37 +28,37 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp);
 
 //---------------------------------------------------------------------------------------------------------------------
 
-const static CommandLineFlagsType FILE_FLAG           = {.short_flag = "-f", .long_flag = "--file",
+static const CommandLineFlagsType FILE_FLAG           = {.short_flag = "-f", .long_flag = "--file",
                                                          .Help = PrintFileHelp,};
 
-const static CommandLineFlagsType COMMAND_LINE_FLAG   = {.short_flag = "-c", .long_flag = "--cmd",
+static const CommandLineFlagsType COMMAND_LINE_FLAG   = {.short_flag = "-c", .long_flag = "--cmd",
                                                          .Help = PrintCommandLineHelp,};
 
-const static CommandLineFlagsType STDIN_FLAG          = {.short_flag = "-s", .long_flag = "--stdin",
+static const CommandLineFlagsType STDIN_FLAG          = {.short_flag = "-s", .long_flag = "--stdin",
                                                          .Help = PrintStdinHelp,};
 
 #ifndef NDEBUG
-const static CommandLineFlagsType TEST_MODE_FLAG      = {.short_flag = "-t", .long_flag = "--test",
+static const CommandLineFlagsType TEST_MODE_FLAG      = {.short_flag = "-t", .long_flag = "--test",
                                                          .Help = PrintTestHelp,};
 #endif
 
-const static CommandLineFlagsType EQUATION_INPUT_FLAG = {.short_flag = "-eq", .long_flag = "--equation",
+static const CommandLineFlagsType EQUATION_INPUT_FLAG = {.short_flag = "-eq", .long_flag = "--equation",
                                                          .Help = PrintEquationHelp,};          
                                                                                                                                                                                      
-const static CommandLineFlagsType HELP_FLAG           = {.short_flag = "-h", .long_flag = "--help",
+static const CommandLineFlagsType HELP_FLAG           = {.short_flag = "-h", .long_flag = "--help",
                                                          .Help = PrintHelpFuncHelp,};
 
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief array with command line flags
 #ifndef DEBUG
-const static CommandLineFlagsType commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_FLAG, STDIN_FLAG, 
+static const CommandLineFlagsType commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_FLAG, STDIN_FLAG, 
                                                                     FILE_FLAG, 
                                                                     EQUATION_INPUT_FLAG,
                                                                     HELP_FLAG,
                                                                     TEST_MODE_FLAG,};
 #else
-const static CommandLineFlagsType commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_FLAG, STDIN_FLAG,
+static const CommandLineFlagsType commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE_FLAG, STDIN_FLAG,
                                                                     FILE_FLAG,
                                                                     EQUATION_INPUT_FLAG,
                                                                     HELP_FLAG,};
@@ -68,7 +68,7 @@ const static CommandLineFlagsType commandLineFlags[FLAGS_NUMBER] = {COMMAND_LINE
 
 /// \brief array converts enum ReadingID to enum FlagsIdInArray
 /// \attention all enums ReadingId have to be different and less than MAX_FUNC_NUMBER
-const int convertReadingId[MAX_FUNC_NUMBER] = {
+static const int convertReadingId[MAX_FUNC_NUMBER] = {
     [TypesReadFuncsType::FILE]  = (int) FlagsIdInArray::FILE_FLAG,
     [TypesReadFuncsType::STDIN] = (int) FlagsIdInArray::STDIN_FLAG, 
     [TypesReadFuncsType::CMD]   = (int) FlagsIdInArray::COMMAND_LINE_FLAG,
@@ -77,7 +77,7 @@ const int convertReadingId[MAX_FUNC_NUMBER] = {
 //---------------------------------------------------------------------------------------------------------------------
 
 /// \brief funcs that can be used with -eq flag
-const TypesReadFuncsType EquationReadingFuncs = {
+static const TypesReadFuncsType EquationReadingFuncs = {
     .flagFuncs = {
         [TypesReadFuncsType::FILE]  = ReadEquationCoeffsFromFile,
         [TypesReadFuncsType::STDIN] = ReadEquationCoeffsFromStdin,
@@ -86,7 +86,7 @@ const TypesReadFuncsType EquationReadingFuncs = {
 };
 
 /// \brief funcs that can be used with no input type flag                                                
-const TypesReadFuncsType CoeffsReadingFuncs   = {
+static const TypesReadFuncsType CoeffsReadingFuncs   = {
     .flagFuncs = {
         [TypesReadFuncsType::FILE]  = ReadCoeffsFromFile,
         [TypesReadFuncsType::STDIN] = ReadCoeffsFromStdin,
@@ -95,7 +95,7 @@ const TypesReadFuncsType CoeffsReadingFuncs   = {
 };
 
 /// \brief funcs that can be used with file reading input type
-const TypesReadFuncsType FileReadingFuncs     = {
+static const TypesReadFuncsType FileReadingFuncs     = {
     .flagFuncs = {
         [TypesReadFuncsType::FILE]  = nullptr,
         [TypesReadFuncsType::STDIN] = ReadFileNameFromStdin,
@@ -199,7 +199,7 @@ unsigned int ReadCommandLineFlags(const int argc, const char *argv[]) {
         for (size_t flagNumber = 0; flagNumber < FLAGS_NUMBER; ++flagNumber) {
 
             if (CompareWithFlag(argv[argvPos], commandLineFlags + flagNumber) == 0) {
-                flagsActivated |= (1u << flagNumber);
+                AddFlag(&flagsActivated, (int) flagNumber);
                 break;
             }
 
@@ -763,14 +763,19 @@ bool HasReadAllStringWithFgets(const char *str, const size_t size, FILE *fp) {
 //---------------------------------------------------------------------------------------------------------------------
 
 int CompareWithFlag(const char *str, const CommandLineFlagsType *flags) {
-    return strcmp(str, flags->short_flag) &&
-           strcmp(str, flags->long_flag);
+    assert(str);
+    assert(flags);
+    
+    return strcmp(str, flags->short_flag) && //я хз надо ли менять на strncmp если вроде безопасно
+           strcmp(str, flags->long_flag); 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 
 //null numeration
 int GetFlag(unsigned int flagsActivated, int flagID) {
+    assert(flagID >= 0);
+    
     return (flagsActivated >> flagID) & 1;
 }
 
@@ -778,6 +783,9 @@ int GetFlag(unsigned int flagsActivated, int flagID) {
 
 //null numeration
 void DeleteFlag(unsigned int *flagsActivated, int flagID) {
+    assert(flagsActivated);
+    assert(flagID >= 0);
+
     *flagsActivated &= ~(1u << flagID);
 }
 
@@ -785,6 +793,9 @@ void DeleteFlag(unsigned int *flagsActivated, int flagID) {
 
 //null numeration
 void AddFlag(unsigned int *flagsActivated, int flagID) {
+    assert(flagsActivated);
+    assert(flagID >= 0);
+
     *flagsActivated |= (1u << flagID);
 }
 
