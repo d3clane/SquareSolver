@@ -34,9 +34,9 @@ If -eq is not specified program is reading only 3 coefficients of the equation.
 1) `./quadratic_Solver -c -f filename.txt` (reading file name from command line)
 2) `./quadratic_Solver -c -eq "5x^2 + 3x + 2 + 9x^2 = 78x - 21"` (reading equation from command line)
 3) `./quadratic_Solver` (program will ask about coefficients in standard input)
-4) `./quadratic_Solver` (program will ask about file name in standard input)
-5) `./quadratic_Solver -t`
-6) `./quadratic_Solver -c 5 -2 3` - solves equation with coefficients 5x^2 - 2x + 3 = 0
+4) `./quadratic_Solver -f` (program will ask file name in standard input)
+5) `./quadratic_Solver -t` (program will start tests)
+6) `./quadratic_Solver -c 5 -2 3` - solves equation 5x^2 - 2x + 3 = 0
 
 ### Equation mode:
 

@@ -22,10 +22,13 @@ DOXYFILE = Others/Doxyfile
 #		   Parser/StringEquationFuncs.cpp Solver/Solver.cpp Strings/StringAndCharFuncs.cpp \
 #		   Tester/TestingMode.cpp
 
-filesCppNames = DoubleFuncs.cpp Errors.cpp InputAndOutput.cpp StringEquationFuncs.cpp Solver.cpp \
-				StringAndCharFuncs.cpp TestingMode.cpp main.cpp
+HEADERS  = DoubleFuncs.h Errors.h InputAndOutput.h StringEquationFuncs.h Solver.h \
+		   StringAndCharFuncs.h TestingMode.h
 
-objects = $(filesCppNames:%.cpp=$(OBJECTDIR)/%.o)
+FILESCPP = DoubleFuncs.cpp Errors.cpp InputAndOutput.cpp StringEquationFuncs.cpp Solver.cpp \
+		   StringAndCharFuncs.cpp TestingMode.cpp main.cpp
+
+objects = $(FILESCPP:%.cpp=$(OBJECTDIR)/%.o)
 
 .PHONY: all docs clean install
 
@@ -34,7 +37,7 @@ all: $(PROGRAMDIR)/$(TARGET)
 $(PROGRAMDIR)/$(TARGET): $(objects) 
 	$(CXX) $^ -o $(PROGRAMDIR)/$(TARGET) $(CXXFLAGS)
 
-$(OBJECTDIR)/%.o : %.cpp Errors.h Colors.h
+$(OBJECTDIR)/%.o : %.cpp $(HEADERS)
 	$(CXX) -c $< -o $@ $(CXXFLAGS) 
 
 docs: 
@@ -45,3 +48,6 @@ clean:
 
 install:
 	mkdir $(PROGRAMDIR)
+
+#-include 
+#объектники 
