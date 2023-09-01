@@ -50,7 +50,7 @@ static const int MAX_FUNC_NUMBER = 3;
 
 /// \brief Contains functions to call for every reading type flag
 struct TypesReadFuncsType {
-    typedef Errors (*FlagFunc)(void *storage);
+    typedef Errors (*FlagFunc)(const void *const storage);
 
     /// \brief IDs in flagFuncs array for every input type
     enum ReadingId {
@@ -120,7 +120,7 @@ struct ReadFileNameFromCmdParams {
 /// \param [in] str string to compare
 /// \param [in] flags flags to compare with
 /// \returns 0 if they are equal otherwise not 0
-int CompareWithFlag(const char *str, const CommandLineFlagsType *flags);
+int CompareWithFlag(const char *str, const CommandLineFlagsType *const flags);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -151,7 +151,7 @@ unsigned int ReadCommandLineFlags(const int argc, const char *argv[]);
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful or not 0 if the user decided to quit the input
-Errors ReadCoeffsFromStdin(void *storage);
+Errors ReadCoeffsFromStdin(const void *const storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -163,7 +163,7 @@ Errors ReadCoeffsFromStdin(void *storage);
 /// \param [out] c pointer to the storage for c coefficient
 /// \param [in] fp pointer to the FILE
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadCoeffsFromFile(void *storage);
+Errors ReadCoeffsFromFile(const void *const storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -173,7 +173,7 @@ Errors ReadCoeffsFromFile(void *storage);
 /// \param [out] name storage for file name
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadFileNameFromStdin(void *storage);
+Errors ReadFileNameFromStdin(const void *const storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -185,7 +185,7 @@ Errors ReadFileNameFromStdin(void *storage);
 /// \param [out] name storage for file name
 /// \param [in] size max size of file name (size of storage)
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadFileNameFromCommandLine(void *storage);
+Errors ReadFileNameFromCommandLine(const void *const storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -209,7 +209,7 @@ Errors PrintRoots(const NumberOfRoots numberOfRoots, const double x1, const doub
 /// \param [out] b pointer to the storage for b coefficient
 /// \param [out] c pointer to the storage for c coefficient
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadCoeffsFromCommandLine(void *storage);
+Errors ReadCoeffsFromCommandLine(const void *const storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -223,7 +223,7 @@ Errors ReadCoeffsFromCommandLine(void *storage);
 /// \param [out] b  linear coefficient
 /// \param [out] c  free coefficient
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadEquationCoeffsFromCommandLine(void *storage);
+Errors ReadEquationCoeffsFromCommandLine(const void *const storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -235,7 +235,7 @@ Errors ReadEquationCoeffsFromCommandLine(void *storage);
 /// \param [out] b  linear coefficient
 /// \param [out] c  free coefficient
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadEquationCoeffsFromStdin(void *storage);
+Errors ReadEquationCoeffsFromStdin(const void *const storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -248,7 +248,7 @@ Errors ReadEquationCoeffsFromStdin(void *storage);
 /// \param [out] c  free coefficient
 /// \param [in] fp pointer to the FILE
 /// \return 0 if reading is successful otherwise not 0
-Errors ReadEquationCoeffsFromFile(void *storage);
+Errors ReadEquationCoeffsFromFile(const void *const storage);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -256,7 +256,7 @@ Errors ReadEquationCoeffsFromFile(void *storage);
 ///
 /// \param [in] flagsActivated unsigned int number with bits indicating flags (0 - off, 1 - on)
 /// \return Errors::NO_HELPING_FLAG or Errors::NO_ERRORS
-Errors Help(unsigned int flagsActivated);
+Errors Help(const unsigned int flagsActivated);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -285,7 +285,7 @@ bool HasReadAllStringWithFgets(const char *str, const size_t size, FILE *fp);
 /// \param [in] flagsActivated unsigned int number with bits indicating flags (0 - off, 1 - on)
 /// \param [in] flagID ID of the flag to get (in the null numeration)
 /// \return 0 is flag is off otherwise 1
-int GetFlag(unsigned int flagsActivated, int flagID);
+int GetFlag(const unsigned int flagsActivated, const int flagID);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -293,7 +293,7 @@ int GetFlag(unsigned int flagsActivated, int flagID);
 ///
 /// \param [in] flagsActivated unsigned int number with bits indicating flags (0 - off, 1 - on)
 /// \param [in] flagID ID of the flag to get (in the null numeration)
-void DeleteFlag(unsigned int *flagsActivated, int flagID);
+void DeleteFlag(unsigned int *const flagsActivated, const int flagID);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -301,7 +301,7 @@ void DeleteFlag(unsigned int *flagsActivated, int flagID);
 ///
 /// \param [in] flagsActivated unsigned int number with bits indicating flags (0 - off, 1 - on)
 /// \param [in] flagID ID of the flag to get (in the null numeration)
-void AddFlag(unsigned int *flagsActivated, int flagID);
+void AddFlag(unsigned int *const flagsActivated, const int flagID);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -320,7 +320,7 @@ void AddFlag(unsigned int *flagsActivated, int flagID);
 /// \param [in]fp file pointer with opened file
 /// \param [in]Funcs funcs to call
 /// \return Funcs errors if they occurred, unknown flag error if no funcs called. Otherwise no errors
-Errors CallFlagFunc(unsigned int flagsActivated,
+Errors CallFlagFunc(const unsigned int flagsActivated,
                     double *a, double *b, double *c,
                     const int argc, const char *argv[],
                     FILE *fp, 

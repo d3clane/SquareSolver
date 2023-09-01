@@ -211,10 +211,10 @@ unsigned int ReadCommandLineFlags(const int argc, const char *argv[]) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadCoeffsFromCommandLine(void *storage) {
+Errors ReadCoeffsFromCommandLine(const void *const storage) {
     assert(storage);
 
-    ReadFromCmdParams *const params = (ReadFromCmdParams *) storage;
+    const ReadFromCmdParams *const params = (const ReadFromCmdParams *) storage;
 
     assert(params->argv);
     assert(params->coeffsPtrs.a);
@@ -256,10 +256,10 @@ Errors ReadCoeffsFromCommandLine(void *storage) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadEquationCoeffsFromCommandLine(void *storage) {
+Errors ReadEquationCoeffsFromCommandLine(const void *const storage) {
     assert(storage);
 
-    ReadFromCmdParams *const params = (ReadFromCmdParams *) storage;
+    const ReadFromCmdParams *const params = (const ReadFromCmdParams *) storage;
 
     assert(params->argv);   
     assert(params->coeffsPtrs.a);
@@ -302,10 +302,10 @@ Errors ReadEquationCoeffsFromCommandLine(void *storage) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadFileNameFromCommandLine(void *storage) {
+Errors ReadFileNameFromCommandLine(const void *const storage) {
     assert(storage);
 
-    ReadFileNameFromCmdParams *const params = (ReadFileNameFromCmdParams *) storage;
+    const ReadFileNameFromCmdParams *const params = (const ReadFileNameFromCmdParams *) storage;
 
     assert(params->argv);
     assert(params->fileName.name);
@@ -335,10 +335,10 @@ Errors ReadFileNameFromCommandLine(void *storage) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadCoeffsFromStdin(void *storage) {
+Errors ReadCoeffsFromStdin(const void *const storage) {
     assert(storage);
 
-    CoeffsPtrs *const params = (CoeffsPtrs *) storage;
+    const CoeffsPtrs *const params = (const CoeffsPtrs *) storage;
 
     assert(params->a);
     assert(params->b);
@@ -383,10 +383,10 @@ Errors ReadCoeffsFromStdin(void *storage) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadEquationCoeffsFromStdin(void *storage) {
+Errors ReadEquationCoeffsFromStdin(const void *const storage) {
     assert(storage);
 
-    CoeffsPtrs *const params = (CoeffsPtrs *) storage;
+    const CoeffsPtrs *const params = (const CoeffsPtrs *) storage;
 
     assert(params->a);
     assert(params->b);
@@ -428,10 +428,10 @@ Errors ReadEquationCoeffsFromStdin(void *storage) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadFileNameFromStdin(void *storage) {
+Errors ReadFileNameFromStdin(const void *const storage) {
     assert(storage);
     
-    FileNameParams *const params = (FileNameParams *) storage;
+    const FileNameParams *const params = (const FileNameParams *) storage;
 
     assert(params->name);
     assert(params->size > 0);
@@ -455,10 +455,10 @@ Errors ReadFileNameFromStdin(void *storage) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadCoeffsFromFile(void *storage) {
+Errors ReadCoeffsFromFile(const void *const storage) {
     assert(storage);
 
-    ReadCoeffsFromFileParams *const params = (ReadCoeffsFromFileParams *) storage;
+    const ReadCoeffsFromFileParams *const params = (const ReadCoeffsFromFileParams *) storage;
 
     assert(params->coeffs.a);
     assert(params->coeffs.b);
@@ -494,10 +494,10 @@ Errors ReadCoeffsFromFile(void *storage) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors ReadEquationCoeffsFromFile(void *storage) {
+Errors ReadEquationCoeffsFromFile(const void *const storage) {
     assert(storage);
 
-    ReadCoeffsFromFileParams *const params = (ReadCoeffsFromFileParams *) storage;
+    const ReadCoeffsFromFileParams *const params = (const ReadCoeffsFromFileParams *) storage;
 
     assert(params->coeffs.a);
     assert(params->coeffs.b);
@@ -737,6 +737,8 @@ static inline Errors TryOpenFile(const char *name, const char *mode, FILE **fp) 
 
 Errors Fgets_s(char *name, const size_t size, FILE *fp) {
     assert(name);
+    assert(fp);
+    assert(size > 0);
 
     if (!fgets(name, (int) size, fp)) {
         UpdateError(Errors::READING_FROM_STDIN_ERROR);
@@ -753,6 +755,10 @@ Errors Fgets_s(char *name, const size_t size, FILE *fp) {
 //---------------------------------------------------------------------------------------------------------------------
 
 bool HasReadAllStringWithFgets(const char *str, const size_t size, FILE *fp) {
+    assert(str);
+    assert(fp);
+    assert(size > 0);
+
     if (strlen(str) + 1 < size || str[size - 2] == '\0') {
         return 1;
     }  
@@ -762,18 +768,18 @@ bool HasReadAllStringWithFgets(const char *str, const size_t size, FILE *fp) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-int CompareWithFlag(const char *str, const CommandLineFlagsType *flags) {
+int CompareWithFlag(const char *str, const CommandLineFlagsType *const flags) {
     assert(str);
     assert(flags);
     
-    return strcmp(str, flags->short_flag) && //я хз надо ли менять на strncmp если вроде безопасно
+    return strcmp(str, flags->short_flag) &&
            strcmp(str, flags->long_flag); 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 
 //null numeration
-int GetFlag(unsigned int flagsActivated, int flagID) {
+int GetFlag(const unsigned int flagsActivated, const int flagID) {
     assert(flagID >= 0);
     
     return (flagsActivated >> flagID) & 1;
@@ -782,7 +788,7 @@ int GetFlag(unsigned int flagsActivated, int flagID) {
 //---------------------------------------------------------------------------------------------------------------------
 
 //null numeration
-void DeleteFlag(unsigned int *flagsActivated, int flagID) {
+void DeleteFlag(unsigned int *const flagsActivated, const int flagID) {
     assert(flagsActivated);
     assert(flagID >= 0);
 
@@ -792,7 +798,7 @@ void DeleteFlag(unsigned int *flagsActivated, int flagID) {
 //---------------------------------------------------------------------------------------------------------------------
 
 //null numeration
-void AddFlag(unsigned int *flagsActivated, int flagID) {
+void AddFlag(unsigned int *const flagsActivated, const int flagID) {
     assert(flagsActivated);
     assert(flagID >= 0);
 
@@ -801,16 +807,23 @@ void AddFlag(unsigned int *flagsActivated, int flagID) {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-Errors CallFlagFunc(unsigned int flagsActivated,
+Errors CallFlagFunc(const unsigned int flagsActivated,
                     double *a, double *b, double *c,
                     const int argc, const char *argv[],
                     FILE *fp, 
                     const TypesReadFuncsType *Funcs) {
-    
+    assert(a);
+    assert(b);
+    assert(c);
+    assert(argc >= 0);
+    assert(Funcs);
+
     for (size_t funcPos = 0; funcPos < MAX_FUNC_NUMBER; ++funcPos) {
 
             if (GetFlag(flagsActivated, convertReadingId[funcPos])) {
                 if (funcPos == TypesReadFuncsType::FILE) {
+                    assert(fp);
+                    
                     ReadCoeffsFromFileParams params = {
                         .coeffs = {
                             .a = a,
@@ -834,6 +847,9 @@ Errors CallFlagFunc(unsigned int flagsActivated,
                 } 
 
                 if (funcPos == TypesReadFuncsType::CMD) {
+                    assert(argv);
+                    assert(argc >= 0);
+
                     ReadFromCmdParams params = {
                         .coeffsPtrs = {
                             .a = a,
